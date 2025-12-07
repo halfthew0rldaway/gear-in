@@ -83,7 +83,16 @@ class StorefrontController extends Controller
         }
 
         $selectedCategory = null;
-        if ($categorySlug = $request->input('category')) {
+        
+        // Filter collaboration harus dijalankan SEBELUM selectedCategory
+        // karena ini mengubah kategori yang dipilih
+        if ($request->has('collaboration') && $request->input('collaboration') == '1') {
+            $collaborationCategory = Category::where('slug', 'collaboration-special-edition')->first();
+            if ($collaborationCategory) {
+                $productsQuery->where('category_id', $collaborationCategory->id);
+                $selectedCategory = $collaborationCategory; // Set sebagai selectedCategory untuk UI
+            }
+        } elseif ($categorySlug = $request->input('category')) {
             $selectedCategory = $categories->firstWhere('slug', $categorySlug);
             if ($selectedCategory) {
                 $productsQuery->where('category_id', $selectedCategory->id);
@@ -118,6 +127,7 @@ class StorefrontController extends Controller
                 'max_price' => $request->input('max_price'),
                 'in_stock' => $request->boolean('in_stock'),
                 'featured' => $request->boolean('featured'),
+                'collaboration' => $request->has('collaboration') && $request->input('collaboration') == '1',
             ],
         ]);
     }
@@ -128,17 +138,25 @@ class StorefrontController extends Controller
             'q' => ['required', 'string', 'min:2'],
         ]);
 
+        $searchTerm = $request->input('q');
+        $collaborationCategory = Category::where('slug', 'collaboration-special-edition')->first();
+
         $products = Product::active()
-            ->with('images')
-            ->where('name', 'like', '%'.$request->input('q').'%')
+            ->with('images', 'category')
+            ->where(function ($query) use ($searchTerm) {
+                $query->where('name', 'like', '%'.$searchTerm.'%')
+                    ->orWhere('summary', 'like', '%'.$searchTerm.'%')
+                    ->orWhere('description', 'like', '%'.$searchTerm.'%');
+            })
             ->orderBy('name')
-            ->take(5)
-            ->get(['id', 'name', 'slug', 'price']);
+            ->take(8)
+            ->get(['id', 'name', 'slug', 'price', 'category_id']);
 
         return response()->json($products->map(fn ($product) => [
             'name' => $product->name,
             'slug' => $product->slug,
             'price' => $product->formatted_price,
+            'is_collaboration' => $collaborationCategory && $product->category_id === $collaborationCategory->id,
         ]));
     }
 }

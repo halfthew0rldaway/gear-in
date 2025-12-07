@@ -96,7 +96,7 @@
                     <span>{{ 'Rp '.number_format($subtotal, 0, ',', '.') }}</span>
                 </div>
                 <div class="flex justify-between text-sm text-gray-500">
-                    <span>Shipping</span>
+                    <span>Pengiriman</span>
                     <span>{{ 'Rp '.number_format($shipping, 0, ',', '.') }}</span>
                 </div>
                 <p class="text-xs text-gray-500">Total akhir menyesuaikan metode pengiriman yang dipilih.</p>

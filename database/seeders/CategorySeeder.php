@@ -34,6 +34,10 @@ class CategorySeeder extends Seeder
                 'name' => 'Digital Products',
                 'description' => 'Software licenses, activation keys, dan produk digital lainnya.',
             ],
+            [
+                'name' => 'Collaboration & Special Edition',
+                'description' => 'Produk limited edition hasil kolaborasi dengan brand, pro players, VTubers, dan franchise populer.',
+            ],
         ];
 
         foreach ($categories as $category) {

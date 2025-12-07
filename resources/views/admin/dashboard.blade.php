@@ -3,6 +3,11 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
+    <div class="mb-4 flex justify-end">
+        <a href="{{ route('admin.dashboard.printable') }}" target="_blank" class="px-4 py-2 rounded-full bg-gray-900 text-white text-xs uppercase tracking-[0.4em] hover:bg-black transition">
+            🖨️ Cetak Laporan Dashboard
+        </a>
+    </div>
     <div class="space-y-6">
         <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
             <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between min-h-[120px]">

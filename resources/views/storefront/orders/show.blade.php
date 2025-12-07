@@ -51,7 +51,7 @@
                     <span>{{ 'Rp '.number_format($order->subtotal, 0, ',', '.') }}</span>
                 </div>
                 <div class="flex justify-between text-sm text-gray-500">
-                    <span>Shipping</span>
+                    <span>Pengiriman</span>
                     <span>{{ 'Rp '.number_format($order->shipping_fee, 0, ',', '.') }}</span>
                 </div>
                 <div class="flex justify-between text-lg font-semibold border-t border-gray-100 pt-4">

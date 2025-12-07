@@ -13,6 +13,7 @@ use Illuminate\View\View;
 class CheckoutController extends Controller
 {
     private array $paymentOptions = [
+        'qris' => 'QRIS (QR Code)',
         'bank_transfer' => 'Bank Transfer (Virtual Account)',
         'cod' => 'Cash on Delivery',
         'ewallet' => 'E-Wallet (OVO/Dana/GoPay)',
@@ -195,6 +196,13 @@ class CheckoutController extends Controller
         });
 
         $this->cartService->clear($user);
+
+        // Redirect to payment page if not COD
+        if ($data['payment_method'] !== 'cod') {
+            return redirect()
+                ->route('payment.show', $order)
+                ->with('status', 'Pesanan berhasil dibuat. Silakan lakukan pembayaran.');
+        }
 
         return redirect()
             ->route('orders.show', $order)

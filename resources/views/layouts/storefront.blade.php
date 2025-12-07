@@ -16,13 +16,14 @@
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                     <a href="{{ route('home') }}" class="text-2xl font-semibold tracking-tight">gear<span class="text-gray-400">-</span>in</a>
                     <nav class="hidden md:flex items-center gap-8 text-sm uppercase tracking-wide text-gray-500">
-                        <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'text-gray-900' : 'hover:text-gray-900' }}">Home</a>
-                        <a href="{{ route('catalog') }}" class="{{ request()->routeIs('catalog') ? 'text-gray-900' : 'hover:text-gray-900' }}">Catalog</a>
+                        <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'text-gray-900' : 'hover:text-gray-900' }}">Beranda</a>
+                        <a href="{{ route('catalog') }}" class="{{ request()->routeIs('catalog') ? 'text-gray-900' : 'hover:text-gray-900' }}">Katalog</a>
                         @auth
                             @if (auth()->user()->isCustomer())
                                 <a href="{{ route('orders.index') }}" class="{{ request()->routeIs('orders.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Pesanan</a>
                                 <a href="{{ route('cart.index') }}" class="{{ request()->routeIs('cart.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Keranjang</a>
                                 <a href="{{ route('wishlist.index') }}" class="{{ request()->routeIs('wishlist.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Wishlist</a>
+                                <a href="{{ route('chat.index') }}" class="{{ request()->routeIs('chat.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Chat</a>
                             @else
                                 <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Admin</a>
                             @endif
@@ -71,6 +72,9 @@
             </footer>
         </div>
         @stack('scripts')
+        
+        <!-- Chat Widget -->
+        <x-chat-widget />
     </body>
 </html>
 

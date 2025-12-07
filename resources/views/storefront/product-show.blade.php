@@ -139,7 +139,7 @@
                                             @if($variant->price_adjustment != 0)
                                                 ({{ $variant->price_adjustment > 0 ? '+' : '' }}{{ 'Rp '.number_format($variant->price_adjustment, 0, ',', '.') }})
                                             @endif
-                                            {{ $variant->stock == 0 ? '- Out of Stock' : '' }}
+                                            {{ $variant->stock == 0 ? '- Stok Habis' : '' }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -162,12 +162,12 @@
                                 <form action="{{ route('wishlist.destroy', $product) }}" method="POST" class="flex-1">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="w-full px-4 py-3 rounded-full border border-red-600 text-red-600 text-xs uppercase tracking-[0.4em] hover:bg-red-600 hover:text-white transition">❤️ Wishlist</button>
+                                    <button type="submit" class="w-full px-4 py-3 rounded-full border border-red-600 text-red-600 text-xs uppercase tracking-[0.4em] hover:bg-red-600 hover:text-white transition">❤️ Daftar Keinginan</button>
                                 </form>
                             @else
                                 <form action="{{ route('wishlist.store', $product) }}" method="POST" class="flex-1">
                                     @csrf
-                                    <button type="submit" class="w-full px-4 py-3 rounded-full border border-gray-300 text-gray-600 text-xs uppercase tracking-[0.4em] hover:border-gray-900 hover:text-gray-900 transition">♡ Wishlist</button>
+                                    <button type="submit" class="w-full px-4 py-3 rounded-full border border-gray-300 text-gray-600 text-xs uppercase tracking-[0.4em] hover:border-gray-900 hover:text-gray-900 transition">♡ Daftar Keinginan</button>
                                 </form>
                             @endif
                         </div>

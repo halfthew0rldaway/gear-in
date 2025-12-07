@@ -26,7 +26,7 @@
                             @method('PATCH')
                             <label class="text-xs text-gray-500 sm:hidden">Jumlah:</label>
                             <input type="number" min="1" max="{{ $item->variant ? $item->variant->stock : $item->product->stock }}" name="quantity" value="{{ $item->quantity }}" class="w-20 rounded-full border border-gray-200 px-4 py-2 text-center text-sm focus:border-gray-900 focus:ring-gray-900">
-                            <button type="submit" class="text-xs uppercase tracking-[0.4em] text-gray-500 hover:text-gray-900 transition">Update</button>
+                            <button type="submit" class="text-xs uppercase tracking-[0.4em] text-gray-500 hover:text-gray-900 transition">Perbarui</button>
                         </form>
                         <form action="{{ route('cart.destroy', $item) }}" method="POST">
                             @csrf
@@ -58,7 +58,7 @@
                     <span>{{ 'Rp '.number_format($subtotal, 0, ',', '.') }}</span>
                 </div>
                 <div class="flex justify-between text-sm text-gray-500">
-                    <span>Shipping</span>
+                    <span>Pengiriman</span>
                     <span>{{ 'Rp '.number_format($shipping, 0, ',', '.') }}</span>
                 </div>
                 <div class="flex justify-between text-lg font-semibold border-t border-gray-100 pt-4">

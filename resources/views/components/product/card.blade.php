@@ -13,7 +13,7 @@
             <!-- Sold Out Overlay -->
             <div class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-10">
                 <div class="text-center">
-                    <p class="text-2xl font-bold text-white mb-1">SOLD OUT</p>
+                    <p class="text-2xl font-bold text-white mb-1">STOK HABIS</p>
                     <p class="text-xs text-gray-200">Stok habis</p>
                 </div>
             </div>

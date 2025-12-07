@@ -8,7 +8,7 @@
     @endphp
     <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
         <header class="space-y-4">
-            <p class="text-xs uppercase tracking-[0.5em] text-gray-500">Catalog</p>
+            <p class="text-xs uppercase tracking-[0.5em] text-gray-500">Katalog</p>
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div>
                     <h1 class="text-4xl font-semibold">Katalog Produk gear-in</h1>
@@ -35,18 +35,21 @@
                         @if ($selectedCategory)
                             <input type="hidden" name="category" value="{{ $selectedCategory->slug }}">
                         @endif
-                        <template x-if="results.length">
-                            <div class="absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-lg z-10">
-                                <ul class="py-2">
-                                    <template x-for="item in results" :key="item.slug">
-                                        <li>
-                                            <a :href="item.url" class="flex items-center justify-between px-4 py-2 hover:bg-gray-50">
-                                                <span class="text-sm text-gray-900" x-text="item.name"></span>
-                                                <span class="text-xs text-gray-500" x-text="item.price"></span>
-                                            </a>
-                                        </li>
-                                    </template>
-                                </ul>
+                        <template x-if="results.length > 0">
+                            <div class="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-lg z-50 max-h-96 overflow-y-auto">
+                                <template x-for="result in results" :key="result.slug">
+                                    <a :href="result.url" class="block px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-none">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex-1">
+                                                <p class="text-sm font-semibold text-gray-900" x-text="result.name"></p>
+                                                <p class="text-xs text-gray-500 mt-0.5" x-text="result.price"></p>
+                                            </div>
+                                            <template x-if="result.is_collaboration">
+                                                <span class="ml-2 px-2 py-1 text-xs uppercase tracking-[0.2em] bg-yellow-100 text-yellow-800 rounded">Kolaborasi</span>
+                                            </template>
+                                        </div>
+                                    </a>
+                                </template>
                             </div>
                         </template>
                     </div>
@@ -57,7 +60,7 @@
         <div class="space-y-4">
             <div class="flex items-center justify-between">
                 <p class="text-sm text-gray-600">Menampilkan {{ $products->total() }} produk</p>
-                <a href="{{ route('catalog') }}" class="text-xs uppercase tracking-[0.5em] text-gray-500 hover:text-gray-900">Reset filter</a>
+                <a href="{{ route('catalog') }}" class="text-xs uppercase tracking-[0.5em] text-gray-500 hover:text-gray-900">Atur ulang filter</a>
             </div>
 
             @php
@@ -89,30 +92,34 @@
                     </a>
                 @endforeach
             </div>
-            <form action="{{ route('catalog') }}" method="GET" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 bg-white border border-gray-200 rounded-3xl p-5 text-sm text-gray-700">
+            <form action="{{ route('catalog') }}" method="GET" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 bg-white border border-gray-200 rounded-3xl p-5 text-sm text-gray-700">
                 <input type="hidden" name="q" value="{{ $searchQuery }}">
-                @if ($selectedCategory)
+                @if ($selectedCategory && !$filters['collaboration'])
                     <input type="hidden" name="category" value="{{ $selectedCategory->slug }}">
                 @endif
                 <label class="space-y-1">
-                    <span class="text-xs uppercase tracking-[0.4em] text-gray-500">Min Price</span>
+                    <span class="text-xs uppercase tracking-[0.4em] text-gray-500">Harga Min</span>
                     <input type="number" name="min_price" value="{{ $filters['min_price'] }}" class="w-full rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900" placeholder="0">
                 </label>
                 <label class="space-y-1">
-                    <span class="text-xs uppercase tracking-[0.4em] text-gray-500">Max Price</span>
+                    <span class="text-xs uppercase tracking-[0.4em] text-gray-500">Harga Max</span>
                     <input type="number" name="max_price" value="{{ $filters['max_price'] }}" class="w-full rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900" placeholder="5000000">
                 </label>
                 <label class="flex items-center gap-2 text-xs uppercase tracking-[0.4em] text-gray-500">
                     <input type="checkbox" name="in_stock" value="1" {{ $filters['in_stock'] ? 'checked' : '' }} class="rounded border-gray-300 text-gray-900 focus:ring-gray-900">
-                    Ready Stock
+                    Stok Tersedia
                 </label>
                 <label class="flex items-center gap-2 text-xs uppercase tracking-[0.4em] text-gray-500">
                     <input type="checkbox" name="featured" value="1" {{ $filters['featured'] ? 'checked' : '' }} class="rounded border-gray-300 text-gray-900 focus:ring-gray-900">
-                    Featured
+                    Unggulan
                 </label>
-                <div class="sm:col-span-2 lg:col-span-4 flex flex-wrap gap-3">
-                    <button class="px-5 py-2 rounded-full bg-gray-900 text-white text-xs uppercase tracking-[0.4em]">Apply</button>
-                    <a href="{{ route('catalog') }}" class="text-xs uppercase tracking-[0.4em] text-gray-500 hover:text-gray-900">Reset</a>
+                <label class="flex items-center gap-2 text-xs uppercase tracking-[0.4em] text-gray-500">
+                    <input type="checkbox" name="collaboration" value="1" {{ $filters['collaboration'] ? 'checked' : '' }} class="rounded border-gray-300 text-gray-900 focus:ring-gray-900">
+                    Kolaborasi
+                </label>
+                <div class="sm:col-span-2 lg:col-span-5 flex flex-wrap gap-3">
+                    <button class="px-5 py-2 rounded-full bg-gray-900 text-white text-xs uppercase tracking-[0.4em]">Terapkan</button>
+                    <a href="{{ route('catalog') }}" class="text-xs uppercase tracking-[0.4em] text-gray-500 hover:text-gray-900">Atur Ulang</a>
                 </div>
             </form>
         </div>

@@ -12,7 +12,7 @@
         <!-- Tabs Navigation -->
         <div class="flex flex-wrap gap-2 border-b border-gray-200">
             <button onclick="showSection('ongoing')" id="tab-ongoing" class="tab-button active px-4 py-2 text-sm font-medium text-gray-900 border-b-2 border-gray-900 transition">
-                On Going
+                Sedang Berjalan
                 @if($ongoingOrders->count() > 0)
                     <span class="ml-2 px-2 py-0.5 text-xs bg-gray-100 rounded-full">{{ $ongoingOrders->count() }}</span>
                 @endif

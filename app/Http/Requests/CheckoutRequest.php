@@ -31,7 +31,7 @@ class CheckoutRequest extends FormRequest
             'city' => ['required', 'string', 'max:100'],
             'postal_code' => ['required', 'regex:/^[0-9]{4,10}$/'],
             'notes' => ['nullable', 'string', 'max:500'],
-            'payment_method' => ['required', Rule::in(['bank_transfer', 'cod', 'ewallet'])],
+            'payment_method' => ['required', Rule::in(['qris', 'bank_transfer', 'cod', 'ewallet'])],
             'shipping_method' => ['required', Rule::in(['standard', 'express', 'same_day'])],
         ];
     }

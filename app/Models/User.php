@@ -74,4 +74,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Wishlist::class);
     }
+
+    public function conversations()
+    {
+        return $this->hasMany(Conversation::class, 'user_id');
+    }
+
+    public function adminConversations()
+    {
+        return $this->hasMany(Conversation::class, 'admin_id');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
 }

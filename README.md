@@ -266,6 +266,9 @@ Setelah proses seeding selesai, Anda dapat menggunakan akun berikut untuk login:
 - ✅ **Multiple Product Images** (maksimal 10 gambar per produk)
 - ✅ **Default Placeholder** untuk produk tanpa gambar
 - ✅ **Sold Out Indicator** untuk produk dengan stok 0
+- ✅ **Chat Widget Floating** dengan animasi dan notifikasi
+- ✅ **Chat Langsung di Widget** tanpa perlu reload halaman
+- ✅ **Riwayat Chat** dengan grouping per tanggal
 
 ### Fitur Administrator
 
@@ -278,6 +281,8 @@ Setelah proses seeding selesai, Anda dapat menggunakan akun berikut untuk login:
 - ✅ **Manajemen Tracking Number**
 - ✅ **Low Stock Alerts**
 - ✅ **Manajemen Review** dan admin reply
+- ✅ **Chat Widget Floating untuk Admin** dengan daftar percakapan
+- ✅ **Balas Chat Langsung dari Widget** tanpa reload
 - ✅ **Activity Logging**
 
 ### Fitur Teknis
@@ -291,6 +296,80 @@ Setelah proses seeding selesai, Anda dapat menggunakan akun berikut untuk login:
 - ✅ **Image Processing** dengan Intervention Image
 - ✅ **Auto Image Resize & Crop** untuk konsistensi
 - ✅ **Product Specifications** dengan format JSON
+- ✅ **Real-time Chat System** dengan auto-refresh (polling)
+- ✅ **Chat Widget Floating** untuk customer dan admin
+
+## 💬 Fitur Chat System
+
+### Cara Kerja Chat System
+
+Sistem chat di Gear-In menggunakan **database-based messaging** dengan **auto-refresh (polling)** untuk memberikan pengalaman yang mirip real-time tanpa memerlukan WebSocket atau service eksternal.
+
+#### Arsitektur
+
+1. **Database Structure:**
+   - `conversations` table: Menyimpan percakapan antara customer dan admin
+   - `messages` table: Menyimpan pesan-pesan dalam setiap percakapan
+   - Setiap percakapan memiliki `user_id` (customer) dan `admin_id` (admin yang menangani)
+   - Status percakapan: `open`, `pending`, atau `closed`
+
+2. **Auto-Refresh Mechanism:**
+   - JavaScript polling setiap 3 detik untuk mengambil pesan baru
+   - Refresh otomatis setelah mengirim pesan
+   - Berhenti saat tab tidak aktif (menghemat resource)
+   - Menggunakan AJAX untuk komunikasi tanpa reload halaman
+
+3. **Widget Floating:**
+   - **Customer Widget:** Muncul di pojok kanan bawah dengan animasi floating
+   - **Admin Widget:** Sama seperti customer, dengan daftar percakapan terbaru
+   - Badge notifikasi menampilkan jumlah pesan belum dibaca
+   - Auto-load percakapan terakhir saat widget dibuka
+
+#### Flow Customer
+
+1. Customer klik widget floating di pojok kanan bawah
+2. Widget terbuka dan auto-load percakapan terakhir (jika ada)
+3. Customer bisa langsung mengetik dan mengirim pesan via AJAX
+4. Pesan muncul langsung tanpa reload halaman
+5. Auto-refresh setiap 3 detik untuk melihat balasan admin
+6. Badge notifikasi update otomatis saat ada pesan baru
+
+#### Flow Admin
+
+1. Admin klik widget floating di pojok kanan bawah
+2. Widget menampilkan daftar 5 percakapan terbaru
+3. Admin klik percakapan untuk membuka chat
+4. Admin bisa langsung membalas via AJAX
+5. Auto-refresh setiap 3 detik untuk melihat pesan baru dari customer
+6. Badge notifikasi menampilkan total pesan belum dibaca dari semua customer
+
+#### Halaman Chat Lengkap
+
+- **Customer:** `/chat` - Menampilkan riwayat semua percakapan yang dikelompokkan per tanggal
+  - Grouping: "Hari Ini", "Kemarin", nama hari, atau tanggal lengkap
+  - Setiap percakapan menampilkan preview pesan terakhir, status, dan jumlah pesan
+  - Badge unread count untuk percakapan dengan pesan belum dibaca
+
+- **Admin:** `/admin/chat` - Menampilkan semua percakapan dari semua customer
+  - Daftar lengkap dengan pagination
+  - Filter dan search (jika diperlukan)
+  - Status percakapan dan admin yang menangani
+
+#### Kelebihan Pendekatan Ini
+
+✅ **Simple:** Tidak perlu setup WebSocket/Pusher  
+✅ **Reliable:** Data tersimpan di database  
+✅ **College Project Friendly:** Mudah dijelaskan dan dipahami  
+✅ **Functional:** Tetap memberikan pengalaman chat yang baik  
+✅ **Scalable:** Bisa di-upgrade ke real-time nanti jika diperlukan  
+
+#### Upgrade ke Real-Time (Opsional)
+
+Jika ingin upgrade ke real-time di masa depan:
+1. Install Laravel Echo + Pusher/Soketi
+2. Setup broadcasting
+3. Ganti polling dengan WebSocket listener
+4. Database structure tetap sama, hanya mekanisme update yang berubah
 
 ## 🔍 Troubleshooting
 
@@ -471,4 +550,3 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ---
 
-**Dibuat dengan ❤️ menggunakan Laravel 12**

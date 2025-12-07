@@ -23,6 +23,19 @@
                     <a href="{{ route('admin.categories.index') }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('admin.categories.*') ? 'bg-gray-900 text-white' : 'hover:bg-gray-100' }}">Kategori</a>
                     <a href="{{ route('admin.orders.index') }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('admin.orders.*') ? 'bg-gray-900 text-white' : 'hover:bg-gray-100' }}">Pesanan</a>
                     <a href="{{ route('admin.reviews.index') }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('admin.reviews.*') ? 'bg-gray-900 text-white' : 'hover:bg-gray-100' }}">Reviews</a>
+                    <a href="{{ route('admin.chat.index') }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('admin.chat.*') ? 'bg-gray-900 text-white' : 'hover:bg-gray-100' }}">Chat
+                        @php
+                            $unreadCount = \App\Models\Conversation::whereHas('messages', function ($query) {
+                                $query->where('is_read', false)
+                                    ->whereHas('user', function ($q) {
+                                        $q->where('role', \App\Models\User::ROLE_CUSTOMER);
+                                    });
+                            })->count();
+                        @endphp
+                        @if($unreadCount > 0)
+                            <span class="ml-2 px-2 py-0.5 text-xs bg-red-500 text-white rounded-full">{{ $unreadCount }}</span>
+                        @endif
+                    </a>
                 </nav>
             </aside>
 
@@ -57,6 +70,9 @@
             </div>
         </div>
         @stack('scripts')
+        
+        <!-- Admin Chat Widget -->
+        <x-admin-chat-widget />
     </body>
 </html>
 
