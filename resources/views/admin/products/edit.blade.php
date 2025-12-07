@@ -39,11 +39,33 @@
             <textarea name="description" rows="5" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900">{{ old('description', $product->description) }}</textarea>
         </label>
         <label class="text-xs uppercase tracking-[0.4em] text-gray-400 block">
-            Gambar Baru
-            <input type="file" name="image" class="mt-2 w-full rounded-2xl border border-dashed border-gray-300 px-4 py-3">
+            Spesifikasi (JSON Format)
+            <textarea name="specifications" rows="8" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900 font-mono text-sm" placeholder='{"Berat": "65g", "Sensor": "PixArt PAW3395", "Switches": "Omron D2FC-F-K"}'>{{ old('specifications', $product->specifications ? json_encode($product->specifications, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : '') }}</textarea>
+            <p class="text-xs text-gray-500 mt-1">Format JSON: {"Key": "Value", "Key2": "Value2"}. Contoh: {"Berat": "65g", "Sensor": "PixArt PAW3395"}</p>
         </label>
-        @if ($product->image_path)
-            <p class="text-xs text-gray-500">Gambar saat ini: {{ $product->image_path }}</p>
+        <label class="text-xs uppercase tracking-[0.4em] text-gray-400 block">
+            Tambah Gambar Baru (Max 10 gambar total)
+            <input type="file" name="images[]" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/bmp,image/svg+xml" multiple class="mt-2 w-full rounded-2xl border border-dashed border-gray-300 px-4 py-3">
+            <p class="text-xs text-gray-500 mt-1">Format yang didukung: JPEG, JPG, PNG, GIF, WEBP, BMP, SVG (Max 5MB per gambar). Gambar akan otomatis di-resize dan di-crop menjadi square (800x800).</p>
+        </label>
+        @if ($product->images->count() > 0)
+            <div class="mt-4">
+                <p class="text-xs text-gray-500 mb-2">Gambar saat ini ({{ $product->images->count() }}/10):</p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    @foreach ($product->images as $image)
+                        <div class="relative">
+                            @php
+                                $imageUrl = \Illuminate\Support\Facades\Storage::url($image->image_path);
+                            @endphp
+                            <img src="{{ $imageUrl }}" alt="Product image" class="w-full h-32 object-cover rounded-lg border border-gray-200">
+                            <label class="absolute top-2 right-2">
+                                <input type="checkbox" name="delete_images[]" value="{{ $image->id }}" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                                <span class="text-xs text-red-600 ml-1">Hapus</span>
+                            </label>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
         @endif
         <div class="flex flex-wrap gap-6 text-xs uppercase tracking-[0.4em] text-gray-400">
             <label class="inline-flex items-center gap-2">

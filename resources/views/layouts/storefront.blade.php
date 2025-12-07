@@ -22,6 +22,7 @@
                             @if (auth()->user()->isCustomer())
                                 <a href="{{ route('orders.index') }}" class="{{ request()->routeIs('orders.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Pesanan</a>
                                 <a href="{{ route('cart.index') }}" class="{{ request()->routeIs('cart.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Keranjang</a>
+                                <a href="{{ route('wishlist.index') }}" class="{{ request()->routeIs('wishlist.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Wishlist</a>
                             @else
                                 <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Admin</a>
                             @endif

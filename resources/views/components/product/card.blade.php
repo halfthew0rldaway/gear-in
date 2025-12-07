@@ -1,18 +1,31 @@
 @props(['product'])
 
 @php
-    $image = $product->image_path;
-    if ($image && ! \Illuminate\Support\Str::startsWith($image, ['http://', 'https://'])) {
-        $image = \Illuminate\Support\Facades\Storage::url($image);
-    }
+    $images = $product->images;
+    $hasImages = $images->count() > 0;
+    $isSoldOut = $product->stock == 0;
+    $firstImage = $hasImages ? \Illuminate\Support\Facades\Storage::url($images->first()->image_path) : null;
 @endphp
 
 <div class="group bg-white border border-gray-200 rounded-3xl p-5 flex flex-col gap-4 hover:-translate-y-1 transition">
-    <div class="aspect-square rounded-2xl bg-gray-50 flex items-center justify-center overflow-hidden">
-        @if ($image)
-            <img src="{{ $image }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
+    <div class="aspect-square rounded-2xl bg-gray-50 flex items-center justify-center overflow-hidden relative">
+        @if($isSoldOut)
+            <!-- Sold Out Overlay -->
+            <div class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-10">
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-white mb-1">SOLD OUT</p>
+                    <p class="text-xs text-gray-200">Stok habis</p>
+                </div>
+            </div>
+        @endif
+
+        @if ($hasImages && $firstImage)
+            <img src="{{ $firstImage }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
         @else
-            <span class="text-xs uppercase tracking-[0.3em] text-gray-400">gear-in</span>
+            <!-- Default gear-in placeholder (black background) -->
+            <div class="w-full h-full bg-black flex items-center justify-center">
+                <span class="text-xs uppercase tracking-[0.3em] text-white">gear-in</span>
+            </div>
         @endif
     </div>
     <div class="space-y-2">

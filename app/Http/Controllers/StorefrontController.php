@@ -17,14 +17,14 @@ class StorefrontController extends Controller
             ->get();
 
         $featuredProducts = Product::active()
-            ->with('category')
+            ->with('category', 'images')
             ->where('is_featured', true)
             ->latest()
             ->take(8)
             ->get();
 
         $newArrivals = Product::active()
-            ->with('category')
+            ->with('category', 'images')
             ->latest()
             ->take(6)
             ->get();
@@ -34,7 +34,7 @@ class StorefrontController extends Controller
 
     public function category(Category $category): View
     {
-        $products = $category->products()->active()->with('category')->paginate(12);
+        $products = $category->products()->active()->with('category', 'images')->paginate(12);
 
         return view('storefront.category', compact('category', 'products'));
     }
@@ -44,19 +44,35 @@ class StorefrontController extends Controller
         abort_unless($product->is_active, 404);
 
         $relatedProducts = Product::active()
+            ->with('category', 'images')
             ->where('category_id', $product->category_id)
             ->whereKeyNot($product->getKey())
             ->take(4)
             ->get();
 
-        return view('storefront.product-show', compact('product', 'relatedProducts'));
+        $reviews = $product->approvedReviews()->with('user', 'adminRepliedBy')->latest()->take(10)->get();
+        $canReview = auth()->check() && auth()->user()->orders()
+            ->where('status', \App\Models\Order::STATUS_COMPLETED)
+            ->whereHas('items', function ($query) use ($product) {
+                $query->where('product_id', $product->id);
+            })
+            ->exists() && !$product->reviews()->where('user_id', auth()->id())->exists();
+
+        $isInWishlist = auth()->check() && \App\Models\Wishlist::where('user_id', auth()->id())
+            ->where('product_id', $product->id)
+            ->exists();
+
+        $product->load('variants', 'images');
+        $variants = $product->variants;
+
+        return view('storefront.product-show', compact('product', 'relatedProducts', 'reviews', 'canReview', 'isInWishlist', 'variants'));
     }
 
     public function catalog(Request $request): View
     {
         $categories = Category::active()->orderBy('name')->get();
 
-        $productsQuery = Product::active()->with('category');
+        $productsQuery = Product::active()->with('category', 'images');
 
         if ($search = $request->input('q')) {
             $productsQuery->where(function ($query) use ($search) {
@@ -113,6 +129,7 @@ class StorefrontController extends Controller
         ]);
 
         $products = Product::active()
+            ->with('images')
             ->where('name', 'like', '%'.$request->input('q').'%')
             ->orderBy('name')
             ->take(5)

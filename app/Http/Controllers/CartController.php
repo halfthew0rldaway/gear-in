@@ -40,11 +40,33 @@ class CartController extends Controller
             return back()->withErrors(['product' => 'Produk tidak tersedia.']);
         }
 
-        if ($product->stock < $data['quantity']) {
-            return back()->withErrors(['quantity' => 'Stok produk tidak mencukupi.']);
+        $variantId = $data['variant_id'] ?? null;
+        $variantId = $variantId ? (int) $variantId : null; // Convert to int or null
+        $hasVariants = $product->variants()->count() > 0;
+        $availableStock = $product->stock;
+
+        // If product has variants, variant_id is required
+        if ($hasVariants && !$variantId) {
+            return back()->withErrors(['variant_id' => 'Silakan pilih varian terlebih dahulu.']);
         }
 
-        $this->cartService->addItem($request->user(), $product, $data['quantity']);
+        if ($variantId && $variantId > 0) {
+            $variant = \App\Models\ProductVariant::find($variantId);
+            if (!$variant || $variant->product_id !== $product->id || !$variant->is_active) {
+                return back()->withErrors(['variant_id' => 'Varian tidak valid atau tidak tersedia.']);
+            }
+            $availableStock = $variant->stock;
+            if ($variant->stock < $data['quantity']) {
+                return back()->withErrors(['quantity' => 'Stok varian tidak mencukupi.']);
+            }
+        } else {
+            // No variant selected, use product stock
+            if ($product->stock < $data['quantity']) {
+                return back()->withErrors(['quantity' => 'Stok produk tidak mencukupi.']);
+            }
+        }
+
+        $this->cartService->addItem($request->user(), $product, $data['quantity'], $variantId);
 
         return back()->with('status', 'Produk berhasil ditambahkan ke keranjang.');
     }

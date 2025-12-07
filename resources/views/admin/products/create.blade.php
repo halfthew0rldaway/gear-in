@@ -38,8 +38,14 @@
             <textarea name="description" rows="5" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900">{{ old('description') }}</textarea>
         </label>
         <label class="text-xs uppercase tracking-[0.4em] text-gray-400 block">
-            Gambar
-            <input type="file" name="image" class="mt-2 w-full rounded-2xl border border-dashed border-gray-300 px-4 py-3">
+            Spesifikasi (JSON Format)
+            <textarea name="specifications" rows="8" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900 font-mono text-sm" placeholder='{"Berat": "65g", "Sensor": "PixArt PAW3395", "Switches": "Omron D2FC-F-K"}'>{{ old('specifications') }}</textarea>
+            <p class="text-xs text-gray-500 mt-1">Format JSON: {"Key": "Value", "Key2": "Value2"}. Contoh: {"Berat": "65g", "Sensor": "PixArt PAW3395"}</p>
+        </label>
+        <label class="text-xs uppercase tracking-[0.4em] text-gray-400 block">
+            Gambar (Max 10 gambar)
+            <input type="file" name="images[]" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/bmp,image/svg+xml" multiple class="mt-2 w-full rounded-2xl border border-dashed border-gray-300 px-4 py-3">
+            <p class="text-xs text-gray-500 mt-1">Format yang didukung: JPEG, JPG, PNG, GIF, WEBP, BMP, SVG (Max 5MB per gambar, maksimal 10 gambar). Gambar akan otomatis di-resize dan di-crop menjadi square (800x800).</p>
         </label>
         <div class="flex flex-wrap gap-6 text-xs uppercase tracking-[0.4em] text-gray-400">
             <label class="inline-flex items-center gap-2">

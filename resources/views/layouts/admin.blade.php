@@ -22,6 +22,7 @@
                     <a href="{{ route('admin.products.index') }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('admin.products.*') ? 'bg-gray-900 text-white' : 'hover:bg-gray-100' }}">Produk</a>
                     <a href="{{ route('admin.categories.index') }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('admin.categories.*') ? 'bg-gray-900 text-white' : 'hover:bg-gray-100' }}">Kategori</a>
                     <a href="{{ route('admin.orders.index') }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('admin.orders.*') ? 'bg-gray-900 text-white' : 'hover:bg-gray-100' }}">Pesanan</a>
+                    <a href="{{ route('admin.reviews.index') }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('admin.reviews.*') ? 'bg-gray-900 text-white' : 'hover:bg-gray-100' }}">Reviews</a>
                 </nav>
             </aside>
 
@@ -55,6 +56,7 @@
                 </main>
             </div>
         </div>
+        @stack('scripts')
     </body>
 </html>
 

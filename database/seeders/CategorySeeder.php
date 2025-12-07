@@ -26,6 +26,14 @@ class CategorySeeder extends Seeder
                 'name' => 'Games',
                 'description' => 'Koleksi game original pilihan untuk PC dan console.',
             ],
+            [
+                'name' => 'Consoles',
+                'description' => 'Gaming console dan aksesoris lengkap untuk gaming experience terbaik.',
+            ],
+            [
+                'name' => 'Digital Products',
+                'description' => 'Software licenses, activation keys, dan produk digital lainnya.',
+            ],
         ];
 
         foreach ($categories as $category) {

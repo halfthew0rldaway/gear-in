@@ -61,6 +61,7 @@ class CheckoutController extends Controller
     public function store(CheckoutRequest $request): RedirectResponse
     {
         $user = $request->user();
+        // Load cart items with all necessary relationships
         $cartItems = $this->cartService->getItems($user);
 
         if ($cartItems->isEmpty()) {
@@ -68,6 +69,9 @@ class CheckoutController extends Controller
                 'cart' => 'Keranjang Anda masih kosong.',
             ]);
         }
+
+        // Ensure all variants are loaded properly
+        $cartItems->loadMissing('variant');
 
         $data = $request->validated();
 
@@ -84,6 +88,7 @@ class CheckoutController extends Controller
             $subtotal = 0;
 
             foreach ($cartItems as $item) {
+                // Load product with lock
                 $product = $item->product()->lockForUpdate()->first();
 
                 if (! $product || ! $product->is_active) {
@@ -92,22 +97,65 @@ class CheckoutController extends Controller
                     ]);
                 }
 
-                if ($product->stock < $item->quantity) {
+                $variant = null;
+                $availableStock = $product->stock;
+
+                // Handle variant if exists
+                if (!empty($item->variant_id) && $item->variant_id > 0) {
+                    // Load variant directly using variant_id and verify it belongs to the product
+                    $variant = \App\Models\ProductVariant::where('id', $item->variant_id)
+                        ->where('product_id', $product->id)
+                        ->lockForUpdate()
+                        ->first();
+                    
+                    if (!$variant) {
+                        // Check if variant exists but belongs to different product
+                        $variantExists = \App\Models\ProductVariant::where('id', $item->variant_id)->first();
+                        if ($variantExists) {
+                            throw ValidationException::withMessages([
+                                'cart' => 'Varian ' . $variantExists->name . ' tidak cocok dengan produk ' . $product->name . '. Silakan update keranjang Anda.',
+                            ]);
+                        } else {
+                            throw ValidationException::withMessages([
+                                'cart' => 'Varian tidak ditemukan. Silakan update keranjang Anda.',
+                            ]);
+                        }
+                    }
+                    
+                    // Check if variant is active (only check if explicitly false)
+                    if (isset($variant->is_active) && $variant->is_active === false) {
+                        throw ValidationException::withMessages([
+                            'cart' => 'Varian ' . $variant->name . ' tidak aktif. Silakan pilih varian lain.',
+                        ]);
+                    }
+                    
+                    $availableStock = $variant->stock;
+                }
+
+                if ($availableStock < $item->quantity) {
                     throw ValidationException::withMessages([
-                        'cart' => "Stok {$product->name} tidak mencukupi.",
+                        'cart' => "Stok {$product->name}" . ($variant ? " ({$variant->name})" : '') . " tidak mencukupi.",
                     ]);
                 }
 
-                $lineTotal = $product->price * $item->quantity;
+                $unitPrice = $product->price;
+                if ($variant) {
+                    $unitPrice += $variant->price_adjustment;
+                }
+
+                $lineTotal = $unitPrice * $item->quantity;
                 $subtotal += $lineTotal;
 
                 $lineItems[] = [
                     'product' => $product,
+                    'variant' => $variant,
                     'payload' => [
                         'product_id' => $product->id,
                         'product_name' => $product->name,
                         'product_image' => $product->image_path,
-                        'unit_price' => $product->price,
+                        'variant_id' => $variant?->id,
+                        'variant_name' => $variant?->name,
+                        'unit_price' => $unitPrice,
                         'quantity' => $item->quantity,
                         'line_total' => $lineTotal,
                     ],
@@ -138,6 +186,9 @@ class CheckoutController extends Controller
             foreach ($lineItems as $lineItem) {
                 $order->items()->create($lineItem['payload']);
                 $lineItem['product']->decrement('stock', $lineItem['payload']['quantity']);
+                if ($lineItem['variant']) {
+                    $lineItem['variant']->decrement('stock', $lineItem['payload']['quantity']);
+                }
             }
 
             return $order;

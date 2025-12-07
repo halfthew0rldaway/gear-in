@@ -17,6 +17,7 @@ class Product extends Model
         'sku',
         'summary',
         'description',
+        'specifications',
         'price',
         'stock',
         'image_path',
@@ -28,6 +29,7 @@ class Product extends Model
         'price' => 'decimal:2',
         'is_featured' => 'boolean',
         'is_active' => 'boolean',
+        'specifications' => 'array',
     ];
 
     protected static function booted(): void
@@ -55,6 +57,36 @@ class Product extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function approvedReviews()
+    {
+        return $this->hasMany(Review::class)->where('is_approved', true);
+    }
+
+    public function getAverageRatingAttribute()
+    {
+        return $this->approvedReviews()->avg('rating') ?: 0;
+    }
+
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class)->where('is_active', true);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('order');
     }
 
     public function scopeActive($query)

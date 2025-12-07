@@ -1,59 +1,474 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Gear-In E-Commerce Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Tugas Besar Mata Kuliah Pemrograman Web Lanjut**
 
-## About Laravel
+Platform e-commerce modern berbasis web yang dibangun menggunakan Laravel 12, dilengkapi dengan katalog produk, keranjang belanja, manajemen pesanan, sistem review, wishlist, dan dashboard administrasi.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+> **Catatan:** Project ini dikembangkan sebagai tugas besar untuk mata kuliah Pemrograman Web Lanjut. Fitur-fitur yang tersedia masih dalam tahap formalitas dan fungsionalitas dasar untuk memenuhi requirements tugas. Meskipun demikian, struktur dan kode yang ada dapat dikembangkan lebih lanjut untuk keperluan production dan real-world implementation.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📋 Daftar Isi
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- [Prasyarat Sistem](#prasyarat-sistem)
+- [Instalasi](#instalasi)
+- [Konfigurasi Database](#konfigurasi-database)
+- [Menjalankan Aplikasi](#menjalankan-aplikasi)
+- [Akun Default](#akun-default)
+- [Fitur Aplikasi](#fitur-aplikasi)
+- [Troubleshooting](#troubleshooting)
+- [Informasi Teknis](#informasi-teknis)
 
-## Learning Laravel
+## 🔧 Prasyarat Sistem
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Sebelum melakukan instalasi, pastikan sistem Anda telah memenuhi persyaratan berikut:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Software yang Diperlukan
 
-## Laravel Sponsors
+1. **PHP 8.2 atau lebih tinggi**
+   - Verifikasi versi: `php -v`
+   - Unduh: [PHP Downloads](https://www.php.net/downloads.php)
+   - Ekstensi yang diperlukan: `pdo`, `pdo_sqlite`, `mbstring`, `xml`, `ctype`, `json`, `openssl`, `tokenizer`, `fileinfo`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2. **Composer** (PHP Dependency Manager)
+   - Verifikasi versi: `composer --version`
+   - Unduh: [Composer Downloads](https://getcomposer.org/download/)
 
-### Premium Partners
+3. **Node.js 18.x atau lebih tinggi** (untuk frontend assets)
+   - Verifikasi versi: `node -v`
+   - Unduh: [Node.js Downloads](https://nodejs.org/)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+4. **npm** (termasuk dalam instalasi Node.js)
+   - Verifikasi versi: `npm -v`
 
-## Contributing
+### Software Opsional
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Git** (untuk version control)
+- Code editor (VS Code, PhpStorm, dll)
 
-## Code of Conduct
+## 📦 Instalasi
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Langkah 1: Persiapan Project
 
-## Security Vulnerabilities
+Jika project berada di repository Git, lakukan clone:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    git clone <repository-url>
+    cd gear-in
 
-## License
+Atau jika project sudah tersedia, navigasi ke direktori project:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    cd gear-in
+
+
+### Langkah 2: Instalasi Dependencies PHP
+
+Jalankan perintah berikut untuk menginstal semua package Laravel dan PHP yang diperlukan:
+
+    composer install
+
+**Catatan:** Jika terjadi masalah memori selama instalasi, gunakan:
+
+    COMPOSER_MEMORY_LIMIT=-1 composer install
+
+
+### Langkah 3: Instalasi Dependencies Node.js
+
+Jalankan perintah berikut untuk menginstal dependencies frontend (Vite, Tailwind CSS, dll):
+
+    npm install
+
+
+### Langkah 4: Konfigurasi Environment
+
+1. Salin file environment:
+
+    copy .env.example .env
+
+   (Linux/Mac: `cp .env.example .env`)
+
+2. Generate application key:
+
+    php artisan key:generate
+   
+
+3. **Konfigurasi Database:**
+   
+   Aplikasi secara default menggunakan SQLite. File `.env` sudah dikonfigurasi dengan pengaturan berikut:
+
+    DB_CONNECTION=sqlite
+    DB_DATABASE=C:\absolute\path\to\database\database.sqlite
+    SESSION_DRIVER=file
+   
+   
+   **Untuk SQLite (Default):**
+   - Pastikan path di `DB_DATABASE` menggunakan absolute path (full path)
+   - File database akan dibuat otomatis pada langkah berikutnya
+   
+   **Alternatif MySQL:**
+   Jika Anda lebih memilih menggunakan MySQL, ubah konfigurasi di `.env`:
+
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=gearin
+    DB_USERNAME=root
+    DB_PASSWORD=
+   
+
+## 🗄️ Konfigurasi Database
+
+### Langkah 1: Membuat File Database SQLite
+
+File database seharusnya sudah tersedia di `database/database.sqlite`. Jika belum, buat file tersebut:
+
+**Windows:**
+
+    type nul > database\database.sqlite
+
+
+**Linux/Mac:**
+
+    touch database/database.sqlite
+
+
+### Langkah 2: Menjalankan Migrations
+
+Jalankan perintah berikut untuk membuat semua tabel database yang diperlukan:
+
+    php artisan migrate
+
+
+Output yang diharapkan:
+
+INFO  Running migrations.
+
+  2025_11_17_063640_create_categories_table ..................... DONE
+  2025_11_17_063644_create_products_table ....................... DONE
+  2025_11_17_063647_create_cart_items_table ..................... DONE
+  ...
+
+
+### Langkah 3: Seeding Database
+
+Jalankan perintah berikut untuk mengisi database dengan data sample:
+
+    php artisan db:seed
+
+
+Output yang diharapkan:
+
+INFO  Seeding database.
+
+  Database\Seeders\CategorySeeder ................................. DONE
+  Database\Seeders\ProductSeeder .................................. DONE
+
+
+**Data yang akan di-seed:**
+- Kategori produk
+- Sample produk dengan spesifikasi detail
+- Akun admin dan customer default (lihat [Akun Default](#akun-default))
+
+### Langkah 4: Verifikasi Setup Database
+
+Untuk memverifikasi bahwa setup database berhasil, jalankan:
+
+    php artisan tinker
+
+
+Kemudian di console tinker:
+
+    DB::table('users')->count();  // Seharusnya mengembalikan 3
+    DB::table('products')->count();  // Seharusnya mengembalikan beberapa produk
+    exit
+
+
+## 🚀 Menjalankan Aplikasi
+
+### Langkah 1: Build Frontend Assets
+
+**Untuk Development (dengan hot reload):**
+
+    npm run dev
+
+
+Biarkan terminal ini tetap berjalan. Perintah ini akan memantau perubahan file dan secara otomatis melakukan rebuild assets.
+
+**Untuk Production (build sekali):**
+
+    npm run build
+
+
+### Langkah 2: Menjalankan Development Server
+
+Buka **terminal window baru** (biarkan `npm run dev` tetap berjalan jika Anda menggunakannya):
+
+    php artisan serve
+
+
+Output yang diharapkan:
+
+INFO  Server running on [http://127.0.0.1:8000]
+
+
+### Langkah 3: Mengakses Aplikasi
+
+Buka web browser Anda dan navigasi ke:
+
+    http://127.0.0.1:8000
+
+
+**Akses dari Device Lain:**
+Untuk mengakses aplikasi dari device lain di network yang sama:
+
+    php artisan serve --host=0.0.0.0
+
+Kemudian akses via: `http://your-ip-address:8000`
+
+## 👤 Akun Default
+
+Setelah proses seeding selesai, Anda dapat menggunakan akun berikut untuk login:
+
+### Akun Administrator
+
+**Admin 1:**
+- **Email:** `admin@gear-in.dev`
+- **Password:** `password`
+- **Nama:** Gear-In Admin
+- **Akses:** Full admin panel (products, categories, orders management, reviews)
+
+**Admin 2:**
+- **Email:** `admin2@gear-in.dev`
+- **Password:** `password`
+- **Nama:** Gear-In Admin 2
+- **Akses:** Full admin panel (products, categories, orders management, reviews)
+
+### Akun Customer
+
+- **Email:** `customer@gear-in.dev`
+- **Password:** `password`
+- **Akses:** Fitur customer (browse, cart, checkout, orders, reviews, wishlist)
+
+## ✨ Fitur Aplikasi
+
+> **Catatan Penting:** Fitur-fitur yang tercantum di bawah ini dikembangkan sebagai bagian dari tugas kuliah semester 5. Implementasi yang ada masih dalam tahap formalitas dan fungsionalitas dasar untuk memenuhi requirements tugas. Beberapa fitur mungkin belum memiliki validasi atau error handling yang lengkap seperti pada aplikasi production-ready. Meskipun demikian, struktur kode dan arsitektur yang digunakan sudah dirancang dengan baik dan dapat dikembangkan lebih lanjut untuk keperluan real-world implementation dan production deployment.
+
+### Fitur Customer
+
+- ✅ **Katalog Produk** dengan pencarian dan filter
+- ✅ **Keranjang Belanja** dengan dukungan product variants
+- ✅ **Proses Checkout** dengan multiple shipping options
+- ✅ **Manajemen Pesanan** dengan kategori (On Going, Dibatalkan, Selesai)
+- ✅ **Order Tracking** dengan tracking number
+- ✅ **Pembatalan Pesanan** (untuk pesanan dengan status pending/paid)
+- ✅ **Review dan Rating Produk** (hanya untuk pesanan yang sudah complete)
+- ✅ **Review dari Halaman Detail Order**
+- ✅ **Wishlist/Favorites**
+- ✅ **Printable Receipts** (customer dan admin)
+- ✅ **Product Image Carousel** dengan auto-slide (10 detik) dan navigasi manual
+- ✅ **Multiple Product Images** (maksimal 10 gambar per produk)
+- ✅ **Default Placeholder** untuk produk tanpa gambar
+- ✅ **Sold Out Indicator** untuk produk dengan stok 0
+
+### Fitur Administrator
+
+- ✅ **Dashboard** dengan statistics dan charts
+- ✅ **Manajemen Produk** (CRUD) dengan multiple images
+- ✅ **Image Upload** dengan auto resize & crop (800x800 square)
+- ✅ **Manajemen Kategori**
+- ✅ **Manajemen Pesanan** dengan timeline
+- ✅ **Update Status Pesanan** (auto-update payment_status saat status diubah ke paid)
+- ✅ **Manajemen Tracking Number**
+- ✅ **Low Stock Alerts**
+- ✅ **Manajemen Review** dan admin reply
+- ✅ **Activity Logging**
+
+### Fitur Teknis
+
+- ✅ **Product Variants** (size, color, switches, dll)
+- ✅ **Multiple Product Images** dengan carousel
+- ✅ **Stock Management** dengan variant support
+- ✅ **Activity Logging**
+- ✅ **Role-based Access Control**
+- ✅ **Responsive Design** untuk mobile dan desktop
+- ✅ **Image Processing** dengan Intervention Image
+- ✅ **Auto Image Resize & Crop** untuk konsistensi
+- ✅ **Product Specifications** dengan format JSON
+
+## 🔍 Troubleshooting
+
+### Masalah: "Class not found" atau "Autoload error"
+
+**Solusi:**
+
+    composer dump-autoload
+
+
+### Masalah: "Database file does not exist"
+
+**Solusi:**
+1. Pastikan file `database/database.sqlite` sudah ada
+2. Periksa file permissions (harus readable/writable)
+3. Verifikasi path di `.env` menggunakan absolute path
+
+### Masalah: "Migration error" atau "Table already exists"
+
+**Solusi:**
+
+    php artisan migrate:fresh --seed
+
+
+**Peringatan:** Perintah ini akan menghapus semua data dan membuat ulang database!
+
+### Masalah: "Assets not loading" atau "404 on CSS/JS files"
+
+**Solusi:**
+1. Pastikan `npm run dev` sedang berjalan (untuk development)
+2. Atau jalankan `npm run build` (untuk production)
+3. Clear cache: `php artisan cache:clear`
+4. Clear config: `php artisan config:clear`
+
+### Masalah: "Session driver [database] not supported"
+
+**Solusi:**
+Periksa file `.env` Anda:
+
+    SESSION_DRIVER=file
+
+
+### Masalah: "Permission denied" pada database file
+
+**Solusi (Linux/Mac):**
+
+    chmod 664 database/database.sqlite
+    chmod 775 database
+
+
+**Solusi (Windows):**
+- Klik kanan pada file `database.sqlite`
+- Properties > Security
+- Pastikan user Anda memiliki Read & Write permissions
+
+### Masalah: Port 8000 sudah digunakan
+
+**Solusi:**
+Gunakan port yang berbeda:
+
+    php artisan serve --port=8001
+
+
+### Masalah: "Vite manifest not found"
+
+**Solusi:**
+
+    npm run build
+
+
+### Masalah: Tidak bisa login dengan akun default
+
+**Solusi:**
+Re-seed database:
+
+    php artisan db:seed
+
+
+Atau buat user baru secara manual:
+
+    php artisan tinker
+
+
+    \App\Models\User::create([
+    'name' => 'Test User',
+    'email' => 'test@test.com',
+    'password' => bcrypt('password'),
+    'role' => 'customer'
+]);
+    exit
+
+
+## 📝 Perintah Tambahan
+
+### Clear All Caches
+
+    php artisan optimize:clear
+
+
+### View Routes
+
+    php artisan route:list
+
+
+### Run Tests (jika tersedia)
+
+    php artisan test
+
+
+### Check Application Status
+
+    php artisan about
+
+
+## 🎓 Panduan untuk Evaluator
+
+### Ringkasan Setup Cepat
+
+1. **Instalasi dependencies:**
+   
+   composer install
+   npm install
+   
+
+2. **Konfigurasi environment:**
+   
+   copy .env.example .env
+   php artisan key:generate
+   
+
+3. **Setup database:**
+   
+   type nul > database\database.sqlite
+   php artisan migrate
+   php artisan db:seed
+   
+
+4. **Build assets:**
+   
+   npm run build
+   
+
+5. **Jalankan server:**
+   
+   php artisan serve
+   
+
+6. **Akses aplikasi:**
+   - URL: `http://127.0.0.1:8000`
+   - Login sebagai admin: `admin@gear-in.dev` / `password` atau `admin2@gear-in.dev` / `password`
+   - Login sebagai customer: `customer@gear-in.dev` / `password`
+
+### System Requirements yang Terpenuhi
+
+- ✅ Modern PHP framework (Laravel 12)
+- ✅ Database integration (SQLite/MySQL)
+- ✅ User authentication dan authorization
+- ✅ CRUD operations lengkap
+- ✅ E-commerce functionality (cart, checkout, orders)
+- ✅ Admin panel dengan dashboard
+- ✅ Responsive design untuk berbagai device
+- ✅ Product variants dan specifications
+- ✅ Review system dengan admin reply
+- ✅ Image management dengan processing
+
+## 📞 Support
+
+Jika Anda menemukan masalah yang tidak tercakup di bagian troubleshooting:
+
+1. Periksa Laravel logs: `storage/logs/laravel.log`
+2. Verifikasi semua prasyarat sudah terinstall dengan benar
+3. Pastikan semua migrations sudah berjalan dengan sukses
+4. Periksa file permissions pada direktori `storage/` dan `bootstrap/cache/`
+
+## 📄 License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+---
+
+**Dibuat dengan ❤️ menggunakan Laravel 12**

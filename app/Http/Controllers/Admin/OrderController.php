@@ -26,6 +26,13 @@ class OrderController extends Controller
         return view('admin.orders.show', compact('order'));
     }
 
+    public function receipt(Order $order): View
+    {
+        $order->load('items', 'user', 'statusHistories.user');
+
+        return view('admin.orders.receipt', compact('order'));
+    }
+
     public function update(Request $request, Order $order, ActivityLogger $logger): RedirectResponse
     {
         $data = $request->validate([
@@ -36,20 +43,31 @@ class OrderController extends Controller
                 Order::STATUS_COMPLETED,
                 Order::STATUS_CANCELLED,
             ])],
+            'tracking_number' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $order->update([
+        // Auto-update payment_status when status is set to PAID
+        $updateData = [
             'status' => $data['status'],
-        ]);
+            'tracking_number' => $data['tracking_number'] ?? null,
+        ];
+
+        // If status is updated to PAID, also update payment_status to 'paid'
+        if ($data['status'] === Order::STATUS_PAID) {
+            $updateData['payment_status'] = 'paid';
+        }
+
+        $order->update($updateData);
 
         $order->statusHistories()->create([
             'status' => $data['status'],
             'user_id' => $request->user()->id,
-            'note' => 'Status diperbarui oleh admin',
+            'note' => 'Status diperbarui oleh admin' . ($data['tracking_number'] ? ' - Tracking: ' . $data['tracking_number'] : ''),
         ]);
 
         $logger->log('order.status_updated', $order, [
             'status' => $data['status'],
+            'tracking_number' => $data['tracking_number'] ?? null,
         ], $request->user());
 
         return back()->with('status', 'Status pesanan diperbarui.');

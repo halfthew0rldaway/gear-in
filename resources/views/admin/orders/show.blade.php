@@ -13,10 +13,15 @@
                 <h1 class="text-2xl font-semibold">{{ $order->code }}</h1>
                 <p class="text-sm text-gray-500">{{ $order->created_at->format('d M Y, H:i') }}</p>
             </div>
-            <x-status-badge :status="$order->status" />
+            <div class="flex items-center gap-4">
+                <a href="{{ route('admin.orders.receipt', $order) }}" target="_blank" class="px-5 py-2 rounded-full bg-gray-900 text-white text-xs uppercase tracking-[0.4em] hover:bg-black transition">
+                    Print Receipt
+                </a>
+                <x-status-badge :status="$order->status" />
+            </div>
         </div>
 
-        <form action="{{ route('admin.orders.update', $order) }}" method="POST" class="flex items-center gap-4">
+        <form action="{{ route('admin.orders.update', $order) }}" method="POST" class="flex flex-wrap items-center gap-4">
             @csrf
             @method('PATCH')
             <select name="status" class="rounded-2xl border border-gray-200 px-4 py-2 focus:border-gray-900 focus:ring-gray-900">
@@ -24,6 +29,7 @@
                     <option value="{{ $status }}" @selected($order->status === $status)>{{ ucfirst($status) }}</option>
                 @endforeach
             </select>
+            <input type="text" name="tracking_number" value="{{ $order->tracking_number }}" placeholder="Tracking Number" class="rounded-2xl border border-gray-200 px-4 py-2 focus:border-gray-900 focus:ring-gray-900">
             <button class="px-5 py-2 rounded-full bg-gray-900 text-white text-xs uppercase tracking-[0.4em]">Update</button>
         </form>
 
@@ -44,6 +50,9 @@
                 <p class="text-sm text-gray-600">Pembayaran: <span class="font-semibold text-gray-900">{{ Str::headline($order->payment_method) }}</span></p>
                 <p class="text-sm text-gray-600">Status Pembayaran: <span class="font-semibold text-gray-900">{{ Str::headline($order->payment_status) }}</span></p>
                 <p class="text-sm text-gray-600">Shipping: <span class="font-semibold text-gray-900">{{ Str::headline($order->shipping_method) }}</span></p>
+                @if($order->tracking_number)
+                    <p class="text-sm text-gray-600">Tracking: <span class="font-semibold text-gray-900">{{ $order->tracking_number }}</span></p>
+                @endif
             </div>
         </div>
 
