@@ -12,11 +12,50 @@ use Illuminate\View\View;
 
 class OrderController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $orders = Order::with('user')->latest()->paginate(15);
+        $ordersQuery = Order::with('user');
 
-        return view('admin.orders.index', compact('orders'));
+        // Search
+        if ($search = $request->input('q')) {
+            $ordersQuery->where(function ($query) use ($search) {
+                $query->where('code', 'like', "%{$search}%")
+                      ->orWhere('customer_name', 'like', "%{$search}%")
+                      ->orWhere('customer_email', 'like', "%{$search}%")
+                      ->orWhereHas('user', function ($q) use ($search) {
+                          $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                      });
+            });
+        }
+
+        // Sorting
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('sort_order', 'desc');
+
+        switch ($sortBy) {
+            case 'code':
+                $ordersQuery->orderBy('code', $sortOrder);
+                break;
+            case 'customer':
+                $ordersQuery->leftJoin('users', 'orders.user_id', '=', 'users.id')
+                           ->orderBy('users.name', $sortOrder)
+                           ->select('orders.*');
+                break;
+            case 'total':
+                $ordersQuery->orderBy('total', $sortOrder);
+                break;
+            case 'status':
+                $ordersQuery->orderBy('status', $sortOrder);
+                break;
+            case 'date':
+            default:
+                $ordersQuery->orderBy('created_at', $sortOrder);
+        }
+
+        $orders = $ordersQuery->paginate(15)->withQueryString();
+
+        return view('admin.orders.index', compact('orders', 'sortBy', 'sortOrder'));
     }
 
     public function show(Order $order): View

@@ -10,7 +10,7 @@ use Illuminate\View\View;
 
 class ChatController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request): View|RedirectResponse
     {
         $user = auth()->user();
         

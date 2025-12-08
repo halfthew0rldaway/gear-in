@@ -11,19 +11,19 @@
 
         <!-- Tabs Navigation -->
         <div class="flex flex-wrap gap-2 border-b border-gray-200">
-            <button onclick="showSection('ongoing')" id="tab-ongoing" class="tab-button active px-4 py-2 text-sm font-medium text-gray-900 border-b-2 border-gray-900 transition">
+            <button onclick="showSection('ongoing')" id="tab-ongoing" class="tab-button active px-4 py-2 text-sm font-medium text-gray-900 border-b-2 border-gray-900 transition focus-ring">
                 Sedang Berjalan
                 @if($ongoingOrders->count() > 0)
                     <span class="ml-2 px-2 py-0.5 text-xs bg-gray-100 rounded-full">{{ $ongoingOrders->count() }}</span>
                 @endif
             </button>
-            <button onclick="showSection('canceled')" id="tab-canceled" class="tab-button px-4 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-900 transition">
+            <button onclick="showSection('canceled')" id="tab-canceled" class="tab-button px-4 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-900 transition focus-ring">
                 Dibatalkan
                 @if($canceledOrders->count() > 0)
                     <span class="ml-2 px-2 py-0.5 text-xs bg-gray-100 rounded-full">{{ $canceledOrders->count() }}</span>
                 @endif
             </button>
-            <button onclick="showSection('completed')" id="tab-completed" class="tab-button px-4 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-900 transition">
+            <button onclick="showSection('completed')" id="tab-completed" class="tab-button px-4 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-900 transition focus-ring">
                 Selesai
                 @if($completedOrders->count() > 0)
                     <span class="ml-2 px-2 py-0.5 text-xs bg-gray-100 rounded-full">{{ $completedOrders->count() }}</span>
@@ -33,9 +33,9 @@
 
         <!-- Ongoing Orders Section -->
         <div id="section-ongoing" class="order-section">
-            <div class="bg-white border border-gray-200 rounded-[32px] divide-y divide-gray-100">
+            <div class="bg-white border border-gray-200 rounded-[32px] divide-y divide-gray-100" data-stagger="100" data-stagger-selector="> a">
                 @forelse ($ongoingOrders as $order)
-                    <a href="{{ route('orders.show', $order) }}" class="block sm:flex sm:items-center sm:justify-between gap-4 px-4 sm:px-6 py-4 sm:py-5 hover:bg-gray-50 transition">
+                    <a href="{{ route('orders.show', $order) }}" class="block sm:flex sm:items-center sm:justify-between gap-4 px-4 sm:px-6 py-4 sm:py-5 hover:bg-gray-50 transition focus-ring">
                         <div class="flex-1">
                             <div class="flex items-center gap-3 mb-2">
                                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400 font-medium">{{ $order->code }}</p>
@@ -62,7 +62,7 @@
 
         <!-- Canceled Orders Section -->
         <div id="section-canceled" class="order-section hidden">
-        <div class="bg-white border border-gray-200 rounded-[32px] divide-y divide-gray-100">
+            <div class="bg-white border border-gray-200 rounded-[32px] divide-y divide-gray-100" data-stagger="100" data-stagger-selector="> a">
                 @forelse ($canceledOrders as $order)
                     <a href="{{ route('orders.show', $order) }}" class="block sm:flex sm:items-center sm:justify-between gap-4 px-4 sm:px-6 py-4 sm:py-5 hover:bg-gray-50 transition opacity-75">
                         <div class="flex-1">
@@ -90,7 +90,7 @@
 
         <!-- Completed Orders Section -->
         <div id="section-completed" class="order-section hidden">
-            <div class="bg-white border border-gray-200 rounded-[32px] divide-y divide-gray-100">
+            <div class="bg-white border border-gray-200 rounded-[32px] divide-y divide-gray-100" data-stagger="100" data-stagger-selector="> a">
                 @forelse ($completedOrders as $order)
                     <div class="px-4 sm:px-6 py-4 sm:py-5 hover:bg-gray-50 transition">
                         <div class="block sm:flex sm:items-center sm:justify-between gap-4">

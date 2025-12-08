@@ -9,50 +9,50 @@
         </a>
     </div>
     <div class="space-y-6">
-        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
-            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between min-h-[120px]">
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4 scroll-reveal">
+            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between h-[140px]">
                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400 mb-2">Orders Today</p>
-                <p class="text-3xl font-semibold">{{ $stats['orders_today'] }}</p>
+                <p class="text-3xl font-semibold" data-counter-target="{{ $stats['orders_today'] }}">{{ $stats['orders_today'] }}</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between min-h-[120px]">
+            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between h-[140px]">
                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400 mb-2">Orders This Month</p>
-                <p class="text-3xl font-semibold">{{ $stats['orders_this_month'] }}</p>
+                <p class="text-3xl font-semibold" data-counter-target="{{ $stats['orders_this_month'] }}">{{ $stats['orders_this_month'] }}</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between min-h-[120px]">
+            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between h-[140px]">
                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400 mb-2">Pending Orders</p>
-                <p class="text-3xl font-semibold">{{ $stats['pending_orders'] }}</p>
+                <p class="text-3xl font-semibold" data-counter-target="{{ $stats['pending_orders'] }}">{{ $stats['pending_orders'] }}</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between min-h-[120px]">
+            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between h-[140px]">
                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400 mb-2">Total Revenue</p>
-                <p class="text-2xl sm:text-3xl font-semibold break-words">{{ 'Rp '.number_format($stats['revenue'], 0, ',', '.') }}</p>
+                <p class="text-2xl sm:text-3xl font-semibold break-words leading-tight">{{ 'Rp '.number_format($stats['revenue'], 0, ',', '.') }}</p>
             </div>
         </div>
 
-        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
-            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between min-h-[120px]">
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4 scroll-reveal">
+            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between h-[140px]">
                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400 mb-2">Revenue This Month</p>
-                <p class="text-2xl sm:text-3xl font-semibold break-words">{{ 'Rp '.number_format($stats['revenue_this_month'], 0, ',', '.') }}</p>
+                <p class="text-2xl sm:text-3xl font-semibold break-words leading-tight">{{ 'Rp '.number_format($stats['revenue_this_month'], 0, ',', '.') }}</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between min-h-[120px]">
+            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between h-[140px]">
                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400 mb-2">Total Products</p>
                 <div>
-                    <p class="text-3xl font-semibold">{{ $stats['products'] }}</p>
+                    <p class="text-3xl font-semibold" data-counter-target="{{ $stats['products'] }}">{{ $stats['products'] }}</p>
                     <p class="text-xs text-gray-500 mt-1">{{ $stats['active_products'] }} active</p>
                 </div>
             </div>
-            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between min-h-[120px]">
+            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between h-[140px]">
                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400 mb-2">Low Stock</p>
-                <p class="text-3xl font-semibold text-orange-600">{{ $stats['low_stock_products'] }}</p>
+                <p class="text-3xl font-semibold text-orange-600" data-counter-target="{{ $stats['low_stock_products'] }}">{{ $stats['low_stock_products'] }}</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between min-h-[120px]">
+            <div class="bg-white border border-gray-200 rounded-3xl p-5 flex flex-col justify-between h-[140px]">
                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400 mb-2">Total Customers</p>
-                <p class="text-3xl font-semibold">{{ $stats['customers'] }}</p>
+                <p class="text-3xl font-semibold" data-counter-target="{{ $stats['customers'] }}">{{ $stats['customers'] }}</p>
             </div>
         </div>
     </div>
 
     <div class="grid lg:grid-cols-2 gap-6 mt-6">
-        <div class="bg-white border border-gray-200 rounded-[32px] p-6 flex flex-col">
+        <div class="bg-white border border-gray-200 rounded-[32px] p-6 flex flex-col scroll-reveal">
             <div class="mb-6">
                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400">Sales & Orders</p>
                 <h2 class="text-xl font-semibold">7 Hari Terakhir</h2>
@@ -62,7 +62,7 @@
             </div>
         </div>
 
-        <div class="bg-white border border-gray-200 rounded-[32px] p-6 flex flex-col">
+        <div class="bg-white border border-gray-200 rounded-[32px] p-6 flex flex-col scroll-reveal">
             <div class="mb-6">
                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400">Revenue Trend</p>
                 <h2 class="text-xl font-semibold">6 Bulan Terakhir</h2>
@@ -74,7 +74,7 @@
     </div>
 
     @if($lowStockProducts->count() > 0)
-    <div class="bg-white border border-gray-200 rounded-[32px] p-6 mt-6">
+    <div class="bg-white border border-gray-200 rounded-[32px] p-6 mt-6 scroll-reveal">
         <div class="flex items-center justify-between mb-4">
             <div>
                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400">Low Stock Alert</p>
@@ -98,7 +98,7 @@
     </div>
     @endif
 
-    <div class="bg-white border border-gray-200 rounded-[32px] p-6">
+    <div class="bg-white border border-gray-200 rounded-[32px] p-6 scroll-reveal">
         <div class="flex items-center justify-between mb-4">
             <div>
                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400">Pesanan Terbaru</p>

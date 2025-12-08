@@ -2,7 +2,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('login') }}" id="loginForm">
         @csrf
 
         <!-- Email Address -->
@@ -39,9 +39,40 @@
                 </a>
             @endif
 
-            <x-primary-button class="ms-3">
+            <x-primary-button class="ms-3" id="loginButton">
                 {{ __('Log in') }}
             </x-primary-button>
         </div>
     </form>
+
+    <script>
+        // Fix untuk "Page Expired" - Refresh halaman jika form terlalu lama dibuka
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('loginForm');
+            const formLoadTime = Date.now();
+            const MAX_FORM_AGE = 10 * 60 * 1000; // 10 menit
+
+            // Cek apakah form sudah terlalu lama dibuka
+            form.addEventListener('submit', function(e) {
+                const formAge = Date.now() - formLoadTime;
+                
+                if (formAge > MAX_FORM_AGE) {
+                    // Jika form lebih dari 10 menit, refresh halaman untuk mendapatkan token baru
+                    e.preventDefault();
+                    if (confirm('Form sudah terlalu lama dibuka. Halaman akan di-refresh untuk memperbarui token keamanan.')) {
+                        window.location.reload();
+                    }
+                }
+            });
+
+            // Refresh token secara berkala (setiap 5 menit)
+            setInterval(function() {
+                const formAge = Date.now() - formLoadTime;
+                if (formAge > 5 * 60 * 1000) { // Jika lebih dari 5 menit
+                    // Refresh halaman untuk mendapatkan token baru
+                    window.location.reload();
+                }
+            }, 5 * 60 * 1000);
+        });
+    </script>
 </x-guest-layout>

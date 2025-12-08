@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Ensure CSRF token is valid for login
+        $middleware->validateCsrfTokens(except: [
+            // No exceptions needed, but ensure proper handling
+        ]);
     })
     ->withProviders([
         App\Providers\AppServiceProvider::class,

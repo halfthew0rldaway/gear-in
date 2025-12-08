@@ -9,14 +9,36 @@
     <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
         <header class="space-y-4">
             <p class="text-xs uppercase tracking-[0.5em] text-gray-500">Katalog</p>
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div>
                     <h1 class="text-4xl font-semibold">Katalog Produk gear-in</h1>
                     <p class="text-sm text-gray-600 mt-2 max-w-2xl">
                         Filter dan cari perangkat gaming minimalis favoritmu. Semua produk tersusun rapi dengan stok real-time.
                     </p>
                 </div>
-                <form action="{{ route('catalog') }}" method="GET" class="w-full lg:max-w-md" x-data="catalogSearch('{{ route('catalog.search') }}', @js($queryParams))">
+        </header>
+
+        <form action="{{ route('catalog') }}" method="GET" class="space-y-4">
+            <div class="bg-white border border-gray-200 rounded-3xl p-5 space-y-5">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <p class="text-sm text-gray-600">Menampilkan {{ $products->total() }} produk</p>
+                    <div class="flex items-center gap-4">
+                        <label class="flex items-center gap-2 text-sm text-gray-600">
+                            <span class="text-xs uppercase tracking-[0.4em] text-gray-500">Urutkan:</span>
+                            <select name="sort" onchange="this.form.submit()" class="rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm">
+                                <option value="newest" {{ ($sortBy ?? 'newest') === 'newest' ? 'selected' : '' }}>Terbaru</option>
+                                <option value="price_low" {{ ($sortBy ?? '') === 'price_low' ? 'selected' : '' }}>Harga: Rendah ke Tinggi</option>
+                                <option value="price_high" {{ ($sortBy ?? '') === 'price_high' ? 'selected' : '' }}>Harga: Tinggi ke Rendah</option>
+                                <option value="name_asc" {{ ($sortBy ?? '') === 'name_asc' ? 'selected' : '' }}>Nama: A-Z</option>
+                                <option value="name_desc" {{ ($sortBy ?? '') === 'name_desc' ? 'selected' : '' }}>Nama: Z-A</option>
+                                <option value="rating" {{ ($sortBy ?? '') === 'rating' ? 'selected' : '' }}>Rating Tertinggi</option>
+                                <option value="popular" {{ ($sortBy ?? '') === 'popular' ? 'selected' : '' }}>Paling Populer</option>
+                            </select>
+                        </label>
+                        <a href="{{ route('catalog') }}" class="text-xs uppercase tracking-[0.5em] text-gray-500 hover:text-gray-900">Atur ulang</a>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-5 space-y-4">
                     <div class="relative">
                         <div class="flex items-center gap-3 border border-gray-300 rounded-full px-4 py-2 bg-white focus-within:border-gray-900 focus-within:ring-1 focus-within:ring-gray-900">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -29,44 +51,14 @@
                             value="{{ old('q', $searchQuery) }}"
                             placeholder="Cari keyboard, headset, game..."
                             class="w-full border-none bg-transparent focus:ring-0 text-sm text-gray-900 placeholder:text-gray-500"
-                            x-model="query"
-                            @input.debounce.300ms="fetchResults"
-                        />
-                        @if ($selectedCategory)
-                            <input type="hidden" name="category" value="{{ $selectedCategory->slug }}">
-                        @endif
-                        <template x-if="results.length > 0">
-                            <div class="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-lg z-50 max-h-96 overflow-y-auto">
-                                <template x-for="result in results" :key="result.slug">
-                                    <a :href="result.url" class="block px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-none">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex-1">
-                                                <p class="text-sm font-semibold text-gray-900" x-text="result.name"></p>
-                                                <p class="text-xs text-gray-500 mt-0.5" x-text="result.price"></p>
-                                            </div>
-                                            <template x-if="result.is_collaboration">
-                                                <span class="ml-2 px-2 py-1 text-xs uppercase tracking-[0.2em] bg-yellow-100 text-yellow-800 rounded">Kolaborasi</span>
-                                            </template>
-                                        </div>
-                                    </a>
-                                </template>
+                            />
                             </div>
-                        </template>
-                    </div>
-                </form>
-            </div>
-        </header>
-
-        <div class="space-y-4">
-            <div class="flex items-center justify-between">
-                <p class="text-sm text-gray-600">Menampilkan {{ $products->total() }} produk</p>
-                <a href="{{ route('catalog') }}" class="text-xs uppercase tracking-[0.5em] text-gray-500 hover:text-gray-900">Atur ulang filter</a>
             </div>
 
             @php
                 $queryString = fn ($overrides = []) => array_filter(
                     array_merge(
-                        ['q' => $searchQuery],
+                                ['q' => $searchQuery, 'sort' => $sortBy ?? 'newest'],
                         $overrides
                     ),
                     fn ($value) => filled($value)
@@ -92,41 +84,42 @@
                     </a>
                 @endforeach
             </div>
-            <form action="{{ route('catalog') }}" method="GET" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 bg-white border border-gray-200 rounded-3xl p-5 text-sm text-gray-700">
-                <input type="hidden" name="q" value="{{ $searchQuery }}">
-                @if ($selectedCategory && !$filters['collaboration'])
+
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 pt-4 border-t border-gray-200">
+                @if ($selectedCategory)
                     <input type="hidden" name="category" value="{{ $selectedCategory->slug }}">
                 @endif
                 <label class="space-y-1">
-                    <span class="text-xs uppercase tracking-[0.4em] text-gray-500">Harga Min</span>
+                            <span class="text-xs uppercase tracking-[0.4em] text-gray-500">Harga Min</span>
                     <input type="number" name="min_price" value="{{ $filters['min_price'] }}" class="w-full rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900" placeholder="0">
                 </label>
                 <label class="space-y-1">
-                    <span class="text-xs uppercase tracking-[0.4em] text-gray-500">Harga Max</span>
+                            <span class="text-xs uppercase tracking-[0.4em] text-gray-500">Harga Max</span>
                     <input type="number" name="max_price" value="{{ $filters['max_price'] }}" class="w-full rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900" placeholder="5000000">
                 </label>
                 <label class="flex items-center gap-2 text-xs uppercase tracking-[0.4em] text-gray-500">
                     <input type="checkbox" name="in_stock" value="1" {{ $filters['in_stock'] ? 'checked' : '' }} class="rounded border-gray-300 text-gray-900 focus:ring-gray-900">
-                    Stok Tersedia
+                            Stok Tersedia
                 </label>
                 <label class="flex items-center gap-2 text-xs uppercase tracking-[0.4em] text-gray-500">
                     <input type="checkbox" name="featured" value="1" {{ $filters['featured'] ? 'checked' : '' }} class="rounded border-gray-300 text-gray-900 focus:ring-gray-900">
-                    Unggulan
+                            Unggulan
                 </label>
-                <label class="flex items-center gap-2 text-xs uppercase tracking-[0.4em] text-gray-500">
-                    <input type="checkbox" name="collaboration" value="1" {{ $filters['collaboration'] ? 'checked' : '' }} class="rounded border-gray-300 text-gray-900 focus:ring-gray-900">
-                    Kolaborasi
-                </label>
-                <div class="sm:col-span-2 lg:col-span-5 flex flex-wrap gap-3">
-                    <button class="px-5 py-2 rounded-full bg-gray-900 text-white text-xs uppercase tracking-[0.4em]">Terapkan</button>
-                    <a href="{{ route('catalog') }}" class="text-xs uppercase tracking-[0.4em] text-gray-500 hover:text-gray-900">Atur Ulang</a>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                        <button type="submit" class="px-5 py-2 rounded-full bg-gray-900 text-white text-xs uppercase tracking-[0.4em]">Terapkan Filter</button>
+                        <a href="{{ route('catalog') }}" class="px-5 py-2 rounded-full border border-gray-300 text-gray-600 text-xs uppercase tracking-[0.4em] hover:border-gray-900 hover:text-gray-900">Atur Ulang</a>
+                    </div>
+                </div>
                 </div>
             </form>
-        </div>
 
-        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" id="productGrid">
             @forelse ($products as $product)
-                <x-product.card :product="$product" />
+                <div class="scroll-reveal">
+                    <x-product.card :product="$product" />
+                </div>
             @empty
                 <div class="sm:col-span-2 lg:col-span-3 bg-white border border-gray-200 rounded-3xl p-8 text-center">
                     <p class="text-lg font-semibold text-gray-900">Produk tidak ditemukan</p>
@@ -139,31 +132,114 @@
             {{ $products->links() }}
         </div>
     </section>
-@endsection
 
-@push('scripts')
+    @push('scripts')
     <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('catalogSearch', (endpoint, persisted) => ({
-                query: persisted.q ?? '',
-                results: [],
-                fetchResults() {
-                    if (!this.query || this.query.length < 2) {
-                        this.results = [];
+    document.addEventListener('DOMContentLoaded', function() {
+        // Stagger animation for product cards
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach((card, index) => {
+            card.style.setProperty('--index', index);
+            if (index > 8) {
+                card.style.animationDelay = `${(index % 9) * 0.05}s`;
+            }
+        });
+        
+        @auth
+        // Handle quick add to cart for all product cards
+        document.querySelectorAll('.quick-add-cart-form').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Check if variant form and variant is selected
+                if (form.classList.contains('variant-form')) {
+                    const variantSelect = form.querySelector('select[name="variant_id"]');
+                    if (!variantSelect || !variantSelect.value) {
+                        alert('Silakan pilih varian terlebih dahulu.');
+                        variantSelect?.focus();
                         return;
                     }
-
-                    fetch(`${endpoint}?q=${encodeURIComponent(this.query)}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            this.results = data.map(item => ({
-                                ...item,
-                                url: `/products/${item.slug}`,
-                            }));
-                        });
-                },
-            }));
+                }
+                
+                const button = form.querySelector('button[type="submit"]');
+                const textSpan = button.querySelector('.quick-add-text');
+                const originalText = textSpan ? textSpan.textContent : 'Keranjang';
+                const formData = new FormData(form);
+                
+                // Disable button and show loading
+                button.disabled = true;
+                if (textSpan) {
+                    textSpan.textContent = 'Menambah...';
+                }
+                
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': formData.get('_token')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        if (textSpan) {
+                            textSpan.textContent = 'Ditambahkan!';
+                        }
+                        button.classList.remove('bg-gray-900', 'hover:bg-black');
+                        button.classList.add('bg-green-600', 'hover:bg-green-700');
+                        
+                        // Reset variant select if exists
+                        const variantSelect = form.querySelector('select[name="variant_id"]');
+                        if (variantSelect) {
+                            variantSelect.value = '';
+                        }
+                        
+                        // Reset after 2 seconds
+                        setTimeout(() => {
+                            if (textSpan) {
+                                textSpan.textContent = originalText;
+                            }
+                            button.classList.remove('bg-green-600', 'hover:bg-green-700');
+                            button.classList.add('bg-gray-900', 'hover:bg-black');
+                            button.disabled = false;
+                        }, 2000);
+                    } else {
+                        // Show error - if requires variant, redirect to product page
+                        if (data.requires_variant) {
+                            const productId = form.querySelector('input[name="product_id"]').value;
+                            // Find the product link from the card
+                            const productCard = form.closest('.group');
+                            const productLink = productCard ? productCard.querySelector('a[href*="/products/"]') : null;
+                            if (productLink) {
+                                window.location.href = productLink.href;
+                            } else {
+                                window.location.href = '/products/' + productId;
+                            }
+                        } else {
+                            alert(data.message || 'Gagal menambahkan ke keranjang.');
+                            button.disabled = false;
+                            if (textSpan) {
+                                textSpan.textContent = originalText;
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menambahkan ke keranjang.');
+                    button.disabled = false;
+                    if (textSpan) {
+                        textSpan.textContent = originalText;
+                    }
+                });
+            });
         });
+        @endauth
+    });
     </script>
-@endpush
+    @endpush
+@endsection
+
 

@@ -16,16 +16,16 @@
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                     <a href="{{ route('home') }}" class="text-2xl font-semibold tracking-tight">gear<span class="text-gray-400">-</span>in</a>
                     <nav class="hidden md:flex items-center gap-8 text-sm uppercase tracking-wide text-gray-500">
-                        <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'text-gray-900' : 'hover:text-gray-900' }}">Beranda</a>
-                        <a href="{{ route('catalog') }}" class="{{ request()->routeIs('catalog') ? 'text-gray-900' : 'hover:text-gray-900' }}">Katalog</a>
+                        <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'text-gray-900' : 'hover:text-gray-900' }} link-underline">Beranda</a>
+                        <a href="{{ route('catalog') }}" class="{{ request()->routeIs('catalog') ? 'text-gray-900' : 'hover:text-gray-900' }} link-underline">Katalog</a>
                         @auth
                             @if (auth()->user()->isCustomer())
-                                <a href="{{ route('orders.index') }}" class="{{ request()->routeIs('orders.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Pesanan</a>
-                                <a href="{{ route('cart.index') }}" class="{{ request()->routeIs('cart.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Keranjang</a>
-                                <a href="{{ route('wishlist.index') }}" class="{{ request()->routeIs('wishlist.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Wishlist</a>
-                                <a href="{{ route('chat.index') }}" class="{{ request()->routeIs('chat.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Chat</a>
+                                <a href="{{ route('orders.index') }}" class="{{ request()->routeIs('orders.*') ? 'text-gray-900' : 'hover:text-gray-900' }} link-underline">Pesanan</a>
+                                <a href="{{ route('cart.index') }}" class="{{ request()->routeIs('cart.*') ? 'text-gray-900' : 'hover:text-gray-900' }} link-underline">Keranjang</a>
+                                <a href="{{ route('wishlist.index') }}" class="{{ request()->routeIs('wishlist.*') ? 'text-gray-900' : 'hover:text-gray-900' }} link-underline">Wishlist</a>
+                                <a href="{{ route('chat.index') }}" class="{{ request()->routeIs('chat.*') ? 'text-gray-900' : 'hover:text-gray-900' }} link-underline">Chat</a>
                             @else
-                                <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.*') ? 'text-gray-900' : 'hover:text-gray-900' }}">Admin</a>
+                                <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.*') ? 'text-gray-900' : 'hover:text-gray-900' }} link-underline">Admin</a>
                             @endif
                         @endauth
                     </nav>
@@ -46,7 +46,7 @@
 
             <main class="flex-1">
                 @if (session('status'))
-                    <div class="max-w-4xl mx-auto mt-6 px-4">
+                    <div class="max-w-4xl mx-auto mt-6 px-4 notification-slide">
                         <div class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-900">
                             <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">✓</span>
                             <span>{{ session('status') }}</span>
@@ -54,7 +54,7 @@
                     </div>
                 @endif
                 @if ($errors->any())
-                    <div class="max-w-4xl mx-auto mt-6 px-4">
+                    <div class="max-w-4xl mx-auto mt-6 px-4 notification-slide">
                         <div class="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
                             <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-red-600">!</span>
                             <span>{{ $errors->first() }}</span>

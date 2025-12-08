@@ -40,11 +40,22 @@ class CheckoutController extends Controller
 
     public function index(Request $request): View|RedirectResponse
     {
-        $cart = $this->cartService->totals($request->user());
+        $user = $request->user();
+        
+        // Get selected items if provided
+        $selectedItemIds = $request->input('selected_items', []);
+        
+        if (!empty($selectedItemIds)) {
+            // Only checkout selected items
+            $cart = $this->cartService->totalsForItems($user, $selectedItemIds);
+        } else {
+            // Checkout all items (backward compatibility)
+            $cart = $this->cartService->totals($user);
+        }
 
         if ($cart['items']->isEmpty()) {
             return redirect()->route('cart.index')->withErrors([
-                'cart' => 'Keranjang Anda masih kosong.',
+                'cart' => 'Keranjang Anda masih kosong atau tidak ada item yang dipilih.',
             ]);
         }
 
@@ -53,7 +64,8 @@ class CheckoutController extends Controller
             'subtotal' => $cart['subtotal'],
             'shipping' => $cart['shipping'],
             'total' => $cart['total'],
-            'user' => $request->user(),
+            'user' => $user,
+            'selectedItemIds' => $selectedItemIds,
             'paymentOptions' => $this->paymentOptions,
             'shippingOptions' => $this->shippingOptions,
         ]);
@@ -62,12 +74,25 @@ class CheckoutController extends Controller
     public function store(CheckoutRequest $request): RedirectResponse
     {
         $user = $request->user();
-        // Load cart items with all necessary relationships
-        $cartItems = $this->cartService->getItems($user);
+        
+        // Get selected items if provided
+        $selectedItemIds = $request->input('selected_items', []);
+        
+        if (!empty($selectedItemIds)) {
+            // Only checkout selected items
+            $cartItems = $user->cartItems()
+                ->whereIn('id', $selectedItemIds)
+                ->with(['product.category', 'variant'])
+                ->latest()
+                ->get();
+        } else {
+            // Checkout all items (backward compatibility)
+            $cartItems = $this->cartService->getItems($user);
+        }
 
         if ($cartItems->isEmpty()) {
             return redirect()->route('cart.index')->withErrors([
-                'cart' => 'Keranjang Anda masih kosong.',
+                'cart' => 'Keranjang Anda masih kosong atau tidak ada item yang dipilih.',
             ]);
         }
 
@@ -195,7 +220,12 @@ class CheckoutController extends Controller
             return $order;
         });
 
-        $this->cartService->clear($user);
+        // Only remove checked out items from cart
+        if (!empty($selectedItemIds)) {
+            $user->cartItems()->whereIn('id', $selectedItemIds)->delete();
+        } else {
+            $this->cartService->clear($user);
+        }
 
         // Redirect to payment page if not COD
         if ($data['payment_method'] !== 'cod') {

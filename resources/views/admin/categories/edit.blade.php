@@ -8,11 +8,11 @@
         @method('PUT')
         <label class="text-xs uppercase tracking-[0.4em] text-gray-400 block">
             Nama
-            <input type="text" name="name" value="{{ old('name', $category->name) }}" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900">
+            <input type="text" name="name" value="{{ old('name', $category->name) }}" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900 focus-ring">
         </label>
         <label class="text-xs uppercase tracking-[0.4em] text-gray-400 block">
             Deskripsi
-            <textarea name="description" rows="3" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900">{{ old('description', $category->description) }}</textarea>
+            <textarea name="description" rows="3" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900 focus-ring">{{ old('description', $category->description) }}</textarea>
         </label>
         <label class="text-xs uppercase tracking-[0.4em] text-gray-400 inline-flex items-center gap-2">
             <input type="hidden" name="is_active" value="0">
@@ -20,7 +20,7 @@
             Aktif
         </label>
         <div class="flex justify-end">
-            <button class="px-6 py-3 rounded-full bg-gray-900 text-white text-xs uppercase tracking-[0.4em] hover:bg-black transition">Perbarui</button>
+            <button class="px-6 py-3 rounded-full bg-gray-900 text-white text-xs uppercase tracking-[0.4em] hover:bg-black transition btn-ripple focus-ring">Perbarui</button>
         </div>
     </form>
 @endsection

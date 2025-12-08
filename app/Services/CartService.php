@@ -82,5 +82,30 @@ class CartService
             'total' => $subtotal + $shipping,
         ];
     }
+
+    public function totalsForItems(User $user, array $itemIds): array
+    {
+        $items = $user->cartItems()
+            ->whereIn('id', $itemIds)
+            ->with(['product.category', 'variant'])
+            ->latest()
+            ->get();
+        
+        $subtotal = $items->sum(function (CartItem $item) {
+            $price = $item->product->price;
+            if ($item->variant) {
+                $price += $item->variant->price_adjustment;
+            }
+            return $item->quantity * $price;
+        });
+        $shipping = $subtotal > 0 ? 15000 : 0;
+
+        return [
+            'items' => $items,
+            'subtotal' => $subtotal,
+            'shipping' => $shipping,
+            'total' => $subtotal + $shipping,
+        ];
+    }
 }
 

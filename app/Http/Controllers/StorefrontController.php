@@ -47,7 +47,7 @@ class StorefrontController extends Controller
             ->with('category', 'images')
             ->where('category_id', $product->category_id)
             ->whereKeyNot($product->getKey())
-            ->take(4)
+            ->take(8)
             ->get();
 
         $reviews = $product->approvedReviews()->with('user', 'adminRepliedBy')->latest()->take(10)->get();
@@ -72,7 +72,7 @@ class StorefrontController extends Controller
     {
         $categories = Category::active()->orderBy('name')->get();
 
-        $productsQuery = Product::active()->with('category', 'images');
+        $productsQuery = Product::active()->with('category', 'images', 'variants', 'approvedReviews');
 
         if ($search = $request->input('q')) {
             $productsQuery->where(function ($query) use ($search) {
@@ -84,15 +84,7 @@ class StorefrontController extends Controller
 
         $selectedCategory = null;
         
-        // Filter collaboration harus dijalankan SEBELUM selectedCategory
-        // karena ini mengubah kategori yang dipilih
-        if ($request->has('collaboration') && $request->input('collaboration') == '1') {
-            $collaborationCategory = Category::where('slug', 'collaboration-special-edition')->first();
-            if ($collaborationCategory) {
-                $productsQuery->where('category_id', $collaborationCategory->id);
-                $selectedCategory = $collaborationCategory; // Set sebagai selectedCategory untuk UI
-            }
-        } elseif ($categorySlug = $request->input('category')) {
+        if ($categorySlug = $request->input('category')) {
             $selectedCategory = $categories->firstWhere('slug', $categorySlug);
             if ($selectedCategory) {
                 $productsQuery->where('category_id', $selectedCategory->id);
@@ -115,6 +107,38 @@ class StorefrontController extends Controller
             $productsQuery->where('is_featured', true);
         }
 
+        // Advanced Sorting
+        $sortBy = $request->input('sort', 'newest');
+        switch ($sortBy) {
+            case 'price_low':
+                $productsQuery->orderBy('price', 'asc');
+                break;
+            case 'price_high':
+                $productsQuery->orderBy('price', 'desc');
+                break;
+            case 'name_asc':
+                $productsQuery->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $productsQuery->orderBy('name', 'desc');
+                break;
+            case 'rating':
+                $productsQuery->withAvg('reviews', 'rating')
+                    ->orderBy('reviews_avg_rating', 'desc')
+                    ->orderBy('name', 'asc');
+                break;
+            case 'popular':
+                // Sort by total sales (order items count)
+                $productsQuery->withCount('orderItems')
+                    ->orderBy('order_items_count', 'desc')
+                    ->orderBy('name', 'asc');
+                break;
+            case 'newest':
+            default:
+                $productsQuery->latest();
+                break;
+        }
+
         $products = $productsQuery->paginate(12)->withQueryString();
 
         return view('storefront.catalog', [
@@ -122,12 +146,12 @@ class StorefrontController extends Controller
             'categories' => $categories,
             'searchQuery' => $search,
             'selectedCategory' => $selectedCategory,
+            'sortBy' => $sortBy,
             'filters' => [
                 'min_price' => $request->input('min_price'),
                 'max_price' => $request->input('max_price'),
                 'in_stock' => $request->boolean('in_stock'),
                 'featured' => $request->boolean('featured'),
-                'collaboration' => $request->has('collaboration') && $request->input('collaboration') == '1',
             ],
         ]);
     }
@@ -139,7 +163,6 @@ class StorefrontController extends Controller
         ]);
 
         $searchTerm = $request->input('q');
-        $collaborationCategory = Category::where('slug', 'collaboration-special-edition')->first();
 
         $products = Product::active()
             ->with('images', 'category')
@@ -156,7 +179,6 @@ class StorefrontController extends Controller
             'name' => $product->name,
             'slug' => $product->slug,
             'price' => $product->formatted_price,
-            'is_collaboration' => $collaborationCategory && $product->category_id === $collaborationCategory->id,
         ]));
     }
 }

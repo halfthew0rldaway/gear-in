@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -18,11 +19,47 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class ProductController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $products = Product::with('category', 'images')->latest()->paginate(12);
+        $productsQuery = Product::with('category', 'images');
 
-        return view('admin.products.index', compact('products'));
+        if ($search = $request->input('q')) {
+            $productsQuery->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhere('summary', 'like', "%{$search}%")
+                      ->orWhere('sku', 'like', "%{$search}%")
+                      ->orWhereHas('category', function ($q) use ($search) {
+                          $q->where('name', 'like', "%{$search}%");
+                      });
+            });
+        }
+
+        // Sorting
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('sort_order', 'desc');
+
+        switch ($sortBy) {
+            case 'category':
+                $productsQuery->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+                             ->orderBy('categories.name', $sortOrder)
+                             ->select('products.*');
+                break;
+            case 'price':
+                $productsQuery->orderBy('price', $sortOrder);
+                break;
+            case 'stock':
+                $productsQuery->orderBy('stock', $sortOrder);
+                break;
+            case 'name':
+                $productsQuery->orderBy('name', $sortOrder);
+                break;
+            default:
+                $productsQuery->orderBy('created_at', $sortOrder);
+        }
+
+        $products = $productsQuery->paginate(12)->withQueryString();
+
+        return view('admin.products.index', compact('products', 'sortBy', 'sortOrder'));
     }
 
     public function create(): View

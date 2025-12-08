@@ -269,6 +269,11 @@ Setelah proses seeding selesai, Anda dapat menggunakan akun berikut untuk login:
 - ✅ **Chat Widget Floating** dengan animasi dan notifikasi
 - ✅ **Chat Langsung di Widget** tanpa perlu reload halaman
 - ✅ **Riwayat Chat** dengan grouping per tanggal
+- ✅ **Rating Display** di katalog produk (bintang kuning + rating angka)
+- ✅ **Quick Add to Cart** langsung dari katalog tanpa masuk detail produk
+- ✅ **Variant Selection Dropdown** di katalog untuk produk bervarian
+- ✅ **Product Card Animations** dengan fade-in dan hover effects
+- ✅ **Smooth Animations** untuk semua interaksi (ringan dan performant)
 
 ### Fitur Administrator
 
@@ -298,6 +303,10 @@ Setelah proses seeding selesai, Anda dapat menggunakan akun berikut untuk login:
 - ✅ **Product Specifications** dengan format JSON
 - ✅ **Real-time Chat System** dengan auto-refresh (polling)
 - ✅ **Chat Widget Floating** untuk customer dan admin
+- ✅ **CSS Animations** yang ringan dan GPU-accelerated
+- ✅ **Stagger Animations** untuk product cards
+- ✅ **Micro-interactions** untuk button dan links
+- ✅ **Performance Optimized** animations (menggunakan transform dan opacity)
 
 ## 💬 Fitur Chat System
 
@@ -370,6 +379,91 @@ Jika ingin upgrade ke real-time di masa depan:
 2. Setup broadcasting
 3. Ganti polling dengan WebSocket listener
 4. Database structure tetap sama, hanya mekanisme update yang berubah
+
+## 🎨 Animasi dan Interaksi
+
+Aplikasi ini menggunakan kombinasi animasi CSS dan JavaScript yang ringan dan dioptimalkan untuk performa:
+
+### Animasi CSS yang Tersedia
+
+- **Product Card Fade-In:** Product cards muncul dengan animasi fade-in bertahap (stagger animation)
+- **Image Zoom on Hover:** Gambar produk sedikit zoom saat hover untuk memberikan depth
+- **Button Ripple Effect:** Feedback visual ringan saat hover/klik tombol
+- **Rating Stars Hover:** Rating stars sedikit membesar saat hover
+- **Link Underline Animation:** Underline muncul secara smooth saat hover
+- **Smooth Scroll:** Scroll behavior yang halus untuk navigasi
+- **Success Notification Slide-In:** Notifikasi muncul dari kanan dengan animasi smooth
+- **Focus Ring Animation:** Ring animation untuk accessibility pada form inputs
+
+### Animasi JavaScript yang Tersedia
+
+- **Scroll Reveal Animation:** Elemen muncul dengan fade-in saat masuk viewport menggunakan Intersection Observer
+- **Smooth Number Counter:** Animasi counter untuk angka statistik (dashboard stats, dll)
+- **Table Row Highlight:** Highlight baris tabel saat hover dengan transisi halus
+- **Loading Skeleton:** Skeleton loader saat data dimuat
+- **Toast Notification:** Notifikasi toast yang muncul dari kanan dengan slide animation
+- **Image Lazy Loading:** Fade-in gambar saat dimuat untuk meningkatkan performa
+- **Smooth Scroll to Top:** Tombol scroll to top dengan fade-in/out otomatis
+- **Form Validation Shake:** Animasi shake untuk field yang invalid
+- **Progress Bar:** Progress bar untuk multi-step forms dengan animasi smooth
+- **Stagger Animation:** Animasi bertahap untuk list items (orders, products, reviews, dll)
+
+### Optimasi Performa
+
+Semua animasi menggunakan teknik berikut untuk memastikan performa optimal:
+
+- ✅ **GPU-Accelerated:** Menggunakan `transform` dan `opacity` (tidak trigger reflow)
+- ✅ **Intersection Observer:** Untuk scroll reveal dan lazy loading (lebih efisien dari scroll event)
+- ✅ **RequestAnimationFrame:** Untuk animasi counter yang smooth
+- ✅ **Lightweight:** Durasi animasi pendek (200-400ms) untuk responsif
+- ✅ **Reduced Motion Support:** Menghormati preferensi user untuk reduced motion
+- ✅ **No Layout Shifts:** Animasi tidak menyebabkan perubahan layout yang tidak diinginkan
+- ✅ **Passive Event Listeners:** Untuk scroll events yang lebih performant
+
+### Teknologi Animasi
+
+- **Tailwind CSS Transitions:** Untuk transisi dasar
+- **Custom CSS Keyframes:** Untuk animasi kompleks (shake, loading skeleton, dll)
+- **CSS Variables:** Untuk delay animation yang dinamis
+- **Transform & Opacity:** Untuk animasi yang smooth dan performant
+- **JavaScript Intersection Observer API:** Untuk scroll reveal dan lazy loading
+- **Vanilla JavaScript:** Tidak menggunakan library eksternal untuk animasi (ringan dan cepat)
+
+### Cara Menggunakan Animasi
+
+#### Scroll Reveal
+Tambahkan class `scroll-reveal` ke elemen yang ingin di-animate:
+```html
+<div class="scroll-reveal">Content akan muncul saat scroll</div>
+```
+
+#### Counter Animation
+Tambahkan attribute `data-counter-target` dengan nilai target:
+```html
+<p data-counter-target="150">0</p>
+```
+
+#### Stagger Animation
+Tambahkan attribute `data-stagger` dan `data-stagger-selector`:
+```html
+<div data-stagger="100" data-stagger-selector="> div">
+    <div>Item 1</div>
+    <div>Item 2</div>
+</div>
+```
+
+#### Toast Notification
+Panggil fungsi `showToast()` dari JavaScript:
+```javascript
+showToast('Pesan sukses!', 'success');
+showToast('Terjadi error!', 'error');
+```
+
+#### Shake Animation
+Panggil fungsi `shakeElement()` untuk field yang invalid:
+```javascript
+shakeElement(document.getElementById('field'));
+```
 
 ## 🔍 Troubleshooting
 
