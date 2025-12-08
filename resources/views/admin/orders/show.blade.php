@@ -24,7 +24,8 @@
         <form action="{{ route('admin.orders.update', $order) }}" method="POST" class="flex flex-wrap items-center gap-4">
             @csrf
             @method('PATCH')
-            <select name="status" class="rounded-2xl border border-gray-200 px-4 py-2 focus:border-gray-900 focus:ring-gray-900">
+            <label for="order-status-{{ $order->id }}" class="sr-only">Status Pesanan</label>
+            <select name="status" id="order-status-{{ $order->id }}" class="rounded-2xl border border-gray-200 px-4 py-2 focus:border-gray-900 focus:ring-gray-900">
                 @foreach ([\App\Models\Order::STATUS_PENDING, \App\Models\Order::STATUS_PAID, \App\Models\Order::STATUS_SHIPPED, \App\Models\Order::STATUS_COMPLETED, \App\Models\Order::STATUS_CANCELLED] as $status)
                     <option value="{{ $status }}" @selected($order->status === $status)>{{ ucfirst($status) }}</option>
                 @endforeach

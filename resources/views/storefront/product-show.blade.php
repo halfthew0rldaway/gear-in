@@ -277,8 +277,8 @@
                         <form action="{{ route('reviews.store', $product) }}" method="POST" class="space-y-5">
                             @csrf
                             <div class="space-y-2.5">
-                                <label class="text-xs uppercase tracking-[0.4em] text-gray-400 block">Rating <span class="text-red-500">*</span></label>
-                                <select name="rating" class="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm text-gray-900 focus:border-gray-900 focus:ring-gray-900" required>
+                                <label for="review-rating-{{ $product->id }}" class="text-xs uppercase tracking-[0.4em] text-gray-400 block">Rating <span class="text-red-500">*</span></label>
+                                <select name="rating" id="review-rating-{{ $product->id }}" class="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm text-gray-900 focus:border-gray-900 focus:ring-gray-900" required>
                                     <option value="5">5 - Excellent</option>
                                     <option value="4">4 - Very Good</option>
                                     <option value="3">3 - Good</option>

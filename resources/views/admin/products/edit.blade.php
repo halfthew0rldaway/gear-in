@@ -12,8 +12,8 @@
         </label>
         <div class="grid sm:grid-cols-2 gap-4">
             <label class="text-xs uppercase tracking-[0.4em] text-gray-400 block">
-                Kategori
-                <select name="category_id" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900 focus-ring">
+                <label for="category_id_edit" class="block">Kategori</label>
+                <select name="category_id" id="category_id_edit" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900 focus-ring">
                     @foreach ($categories as $id => $name)
                         <option value="{{ $id }}" @selected(old('category_id', $product->category_id) == $id)>{{ $name }}</option>
                     @endforeach

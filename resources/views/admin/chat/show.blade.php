@@ -27,7 +27,8 @@
                 <form action="{{ route('admin.chat.update-status', $conversation) }}" method="POST" class="flex items-center gap-2" id="status-form">
                     @csrf
                     @method('PATCH')
-                    <select name="status" onchange="submitStatusForm()" class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:ring-gray-900">
+                    <label for="chat-status-{{ $conversation->id }}" class="sr-only">Status Chat</label>
+                    <select name="status" id="chat-status-{{ $conversation->id }}" onchange="submitStatusForm()" class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:ring-gray-900">
                         <option value="open" {{ $conversation->status === 'open' ? 'selected' : '' }}>Buka</option>
                         <option value="pending" {{ $conversation->status === 'pending' ? 'selected' : '' }}>Menunggu</option>
                         <option value="closed" {{ $conversation->status === 'closed' ? 'selected' : '' }}>Tutup</option>

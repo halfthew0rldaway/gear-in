@@ -22,9 +22,9 @@
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <p class="text-sm text-gray-600">Menampilkan {{ $products->total() }} produk</p>
                     <div class="flex items-center gap-4">
-                        <label class="flex items-center gap-2 text-sm text-gray-600">
+                        <label for="sort-select" class="flex items-center gap-2 text-sm text-gray-600">
                             <span class="text-xs uppercase tracking-[0.4em] text-gray-500">Urutkan:</span>
-                            <select name="sort" onchange="this.form.submit()" class="rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm">
+                            <select name="sort" id="sort-select" onchange="this.form.submit()" class="rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm">
                                 <option value="newest" {{ ($sortBy ?? 'newest') === 'newest' ? 'selected' : '' }}>Terbaru</option>
                                 <option value="price_low" {{ ($sortBy ?? '') === 'price_low' ? 'selected' : '' }}>Harga: Rendah ke Tinggi</option>
                                 <option value="price_high" {{ ($sortBy ?? '') === 'price_high' ? 'selected' : '' }}>Harga: Tinggi ke Rendah</option>

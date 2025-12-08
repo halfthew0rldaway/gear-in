@@ -129,6 +129,64 @@ function hideSkeleton(container) {
 }
 
 // ============================================
+// 4.1. Loading Spinner Helper
+// ============================================
+function showLoadingSpinner(container, size = 40) {
+    if (!container) return null;
+    
+    const spinner = document.createElement('div');
+    spinner.className = 'loading-spinner';
+    spinner.style.cssText = `
+        width: ${size}px;
+        height: ${size}px;
+        border: 3px solid #e5e7eb;
+        border-top-color: #111827;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 20px auto;
+    `;
+    
+    container.innerHTML = '';
+    container.appendChild(spinner);
+    return spinner;
+}
+
+function hideLoadingSpinner(container) {
+    if (!container) return;
+    const spinner = container.querySelector('.loading-spinner');
+    if (spinner) {
+        spinner.style.opacity = '0';
+        spinner.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => spinner.remove(), 300);
+    }
+}
+
+// ============================================
+// 4.2. Dots Loader Helper
+// ============================================
+function showDotsLoader(container) {
+    if (!container) return null;
+    
+    const dots = document.createElement('div');
+    dots.className = 'loading-dots';
+    dots.innerHTML = '<span></span><span></span><span></span>';
+    
+    container.innerHTML = '';
+    container.appendChild(dots);
+    return dots;
+}
+
+function hideDotsLoader(container) {
+    if (!container) return;
+    const loader = container.querySelector('.loading-dots');
+    if (loader) {
+        loader.style.opacity = '0';
+        loader.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => loader.remove(), 300);
+    }
+}
+
+// ============================================
 // 5. Toast Notification dengan Slide Animation
 // ============================================
 function showToast(message, type = 'success', duration = 3000) {
@@ -600,6 +658,12 @@ function updateProgressBar(currentStep, totalSteps) {
 // Make progress bar available globally
 window.updateProgressBar = updateProgressBar;
 
+// Make loading functions available globally
+window.showLoadingSpinner = showLoadingSpinner;
+window.hideLoadingSpinner = hideLoadingSpinner;
+window.showDotsLoader = showDotsLoader;
+window.hideDotsLoader = hideDotsLoader;
+
 // ============================================
 // 10. Stagger Animation untuk List Items
 // ============================================
@@ -665,6 +729,10 @@ export {
     staggerAnimation,
     showSkeleton,
     hideSkeleton,
-    animateCounter
+    animateCounter,
+    showLoadingSpinner,
+    hideLoadingSpinner,
+    showDotsLoader,
+    hideDotsLoader
 };
 

@@ -121,8 +121,8 @@
                                     @csrf
                                     <input type="hidden" name="order_id" value="{{ $order->id }}">
                                     <div>
-                                        <label class="text-xs text-gray-500 mb-1 block">Rating</label>
-                                        <select name="rating" class="w-full rounded-2xl border border-gray-300 px-4 py-2 text-gray-900 focus:border-gray-900 focus:ring-gray-900" required>
+                                        <label for="order-review-rating-{{ $product->id }}" class="text-xs text-gray-500 mb-1 block">Rating</label>
+                                        <select name="rating" id="order-review-rating-{{ $product->id }}" class="w-full rounded-2xl border border-gray-300 px-4 py-2 text-gray-900 focus:border-gray-900 focus:ring-gray-900" required>
                                             <option value="5">5 - Excellent</option>
                                             <option value="4">4 - Very Good</option>
                                             <option value="3">3 - Good</option>
