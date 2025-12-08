@@ -297,6 +297,16 @@
         }
     }
     
+    /* Bounce animation for confirm dialog */
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-8px);
+        }
+    }
+    
     /* Progress bar */
     .progress-container {
         width: 100%;

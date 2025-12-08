@@ -383,10 +383,10 @@
             const variantSelect = document.getElementById('variantSelect');
             
             if (form && variantSelect) {
-                form.addEventListener('submit', function(e) {
+                form.addEventListener('submit', async function(e) {
                     if (!variantSelect.value) {
                         e.preventDefault();
-                        alert('Silakan pilih varian terlebih dahulu.');
+                        await window.customAlert('Silakan pilih varian terlebih dahulu.', 'Varian Belum Dipilih');
                         variantSelect.focus();
                         variantSelect.classList.add('border-red-500');
                         return false;

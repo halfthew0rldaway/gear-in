@@ -207,11 +207,16 @@
             });
 
             // Bulk delete
-            bulkDeleteBtn?.addEventListener('click', function() {
+            bulkDeleteBtn?.addEventListener('click', async function() {
                 const selected = Array.from(itemCheckboxes).filter(cb => cb.checked);
                 if (selected.length === 0) return;
 
-                if (confirm(`Hapus ${selected.length} item dari keranjang?`)) {
+                const confirmed = await window.customConfirm(
+                    `Hapus ${selected.length} item dari keranjang?`,
+                    'Hapus Item'
+                );
+                
+                if (confirmed) {
                     const selectedIds = selected.map(cb => cb.value);
                     bulkDeleteItems.value = JSON.stringify(selectedIds);
                     bulkDeleteForm.submit();
@@ -219,12 +224,12 @@
             });
 
             // Checkout only selected items
-            cartForm?.addEventListener('submit', function(e) {
+            cartForm?.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 const selected = Array.from(itemCheckboxes).filter(cb => cb.checked);
                 if (selected.length === 0) {
-                    alert('Pilih minimal 1 item untuk checkout.');
+                    await window.customAlert('Pilih minimal 1 item untuk checkout.', 'Item Belum Dipilih');
                     return false;
                 }
 

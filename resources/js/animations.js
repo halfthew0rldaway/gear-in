@@ -181,6 +181,284 @@ function showToast(message, type = 'success', duration = 3000) {
 // Make toast available globally
 window.showToast = showToast;
 
+// ============================================
+// 5.5. Custom Alert & Confirm Dialogs
+// ============================================
+function showCustomAlert(message, title = 'Perhatian') {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-dialog-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        `;
+
+        const dialog = document.createElement('div');
+        dialog.className = 'custom-dialog';
+        dialog.style.cssText = `
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            transform: scale(0.95) translateY(10px);
+            transition: transform 0.2s ease;
+        `;
+
+        const icon = document.createElement('div');
+        icon.style.cssText = `
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        `;
+        icon.innerHTML = `
+            <svg class="w-7 h-7 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        `;
+
+        const titleEl = document.createElement('h3');
+        titleEl.textContent = title;
+        titleEl.style.cssText = `
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 12px;
+            text-align: center;
+        `;
+
+        const messageEl = document.createElement('p');
+        messageEl.textContent = message;
+        messageEl.style.cssText = `
+            font-size: 14px;
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        `;
+
+        const button = document.createElement('button');
+        button.textContent = 'Oke';
+        button.style.cssText = `
+            width: 100%;
+            padding: 12px 24px;
+            background: #111827;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+        `;
+
+        button.addEventListener('mouseenter', () => {
+            button.style.background = '#000';
+        });
+        button.addEventListener('mouseleave', () => {
+            button.style.background = '#111827';
+        });
+        button.addEventListener('click', () => {
+            overlay.style.opacity = '0';
+            dialog.style.transform = 'scale(0.95) translateY(10px)';
+            setTimeout(() => {
+                overlay.remove();
+                resolve();
+            }, 200);
+        });
+
+        dialog.appendChild(icon);
+        dialog.appendChild(titleEl);
+        dialog.appendChild(messageEl);
+        dialog.appendChild(button);
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+
+        requestAnimationFrame(() => {
+            overlay.style.opacity = '1';
+            dialog.style.transform = 'scale(1) translateY(0)';
+        });
+    });
+}
+
+function showCustomConfirm(message, title = 'Konfirmasi') {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-dialog-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        `;
+
+        const dialog = document.createElement('div');
+        dialog.className = 'custom-dialog';
+        dialog.style.cssText = `
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            transform: scale(0.95) translateY(10px);
+            transition: transform 0.2s ease;
+        `;
+
+        const icon = document.createElement('div');
+        icon.style.cssText = `
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: ${prefersReducedMotion ? 'none' : 'bounce 0.5s ease'};
+        `;
+        icon.innerHTML = `
+            <svg class="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        `;
+
+        const titleEl = document.createElement('h3');
+        titleEl.textContent = title;
+        titleEl.style.cssText = `
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 12px;
+            text-align: center;
+        `;
+
+        const messageEl = document.createElement('p');
+        messageEl.textContent = message;
+        messageEl.style.cssText = `
+            font-size: 14px;
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        `;
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.cssText = `
+            display: flex;
+            gap: 12px;
+        `;
+
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Batal';
+        cancelButton.style.cssText = `
+            flex: 1;
+            padding: 12px 24px;
+            background: #f3f4f6;
+            color: #374151;
+            border: none;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        `;
+
+        const confirmButton = document.createElement('button');
+        confirmButton.textContent = 'Ya, Hapus';
+        confirmButton.style.cssText = `
+            flex: 1;
+            padding: 12px 24px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        `;
+
+        const closeDialog = (result) => {
+            overlay.style.opacity = '0';
+            dialog.style.transform = 'scale(0.95) translateY(10px)';
+            setTimeout(() => {
+                overlay.remove();
+                resolve(result);
+            }, 200);
+        };
+
+        cancelButton.addEventListener('mouseenter', () => {
+            cancelButton.style.background = '#e5e7eb';
+        });
+        cancelButton.addEventListener('mouseleave', () => {
+            cancelButton.style.background = '#f3f4f6';
+        });
+        cancelButton.addEventListener('click', () => closeDialog(false));
+
+        confirmButton.addEventListener('mouseenter', () => {
+            confirmButton.style.background = '#dc2626';
+        });
+        confirmButton.addEventListener('mouseleave', () => {
+            confirmButton.style.background = '#ef4444';
+        });
+        confirmButton.addEventListener('click', () => closeDialog(true));
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                closeDialog(false);
+            }
+        });
+
+        buttonContainer.appendChild(cancelButton);
+        buttonContainer.appendChild(confirmButton);
+
+        dialog.appendChild(icon);
+        dialog.appendChild(titleEl);
+        dialog.appendChild(messageEl);
+        dialog.appendChild(buttonContainer);
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+
+        requestAnimationFrame(() => {
+            overlay.style.opacity = '1';
+            dialog.style.transform = 'scale(1) translateY(0)';
+        });
+    });
+}
+
+// Replace native alert and confirm
+window.customAlert = showCustomAlert;
+window.customConfirm = showCustomConfirm;
+
 // Auto-show toast from session messages
 document.addEventListener('DOMContentLoaded', () => {
     const statusMessage = document.querySelector('.notification-slide');

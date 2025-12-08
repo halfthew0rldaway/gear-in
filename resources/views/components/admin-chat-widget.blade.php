@@ -333,12 +333,12 @@
                                 chatInput.value = '';
                                 loadMessages(currentConversationId);
                             } else {
-                                alert('Gagal mengirim pesan. Silakan coba lagi.');
+                                window.customAlert('Gagal mengirim pesan. Silakan coba lagi.', 'Gagal Mengirim');
                             }
                         })
                         .catch(error => {
                             console.error('Error sending message:', error);
-                            alert('Gagal mengirim pesan. Silakan coba lagi.');
+                            window.customAlert('Gagal mengirim pesan. Silakan coba lagi.', 'Gagal Mengirim');
                         })
                         .finally(() => {
                             sendBtn.disabled = false;

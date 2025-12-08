@@ -155,7 +155,7 @@
                 if (form.classList.contains('variant-form')) {
                     const variantSelect = form.querySelector('select[name="variant_id"]');
                     if (!variantSelect || !variantSelect.value) {
-                        alert('Silakan pilih varian terlebih dahulu.');
+                        window.customAlert('Silakan pilih varian terlebih dahulu.', 'Varian Belum Dipilih');
                         variantSelect?.focus();
                         return;
                     }
@@ -218,7 +218,7 @@
                                 window.location.href = '/products/' + productId;
                             }
                         } else {
-                            alert(data.message || 'Gagal menambahkan ke keranjang.');
+                            window.customAlert(data.message || 'Gagal menambahkan ke keranjang.', 'Gagal Menambahkan');
                             button.disabled = false;
                             if (textSpan) {
                                 textSpan.textContent = originalText;
@@ -228,7 +228,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan saat menambahkan ke keranjang.');
+                    window.customAlert('Terjadi kesalahan saat menambahkan ke keranjang.', 'Terjadi Kesalahan');
                     button.disabled = false;
                     if (textSpan) {
                         textSpan.textContent = originalText;

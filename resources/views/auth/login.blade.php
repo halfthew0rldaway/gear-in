@@ -59,9 +59,11 @@
                 if (formAge > MAX_FORM_AGE) {
                     // Jika form lebih dari 10 menit, refresh halaman untuk mendapatkan token baru
                     e.preventDefault();
-                    if (confirm('Form sudah terlalu lama dibuka. Halaman akan di-refresh untuk memperbarui token keamanan.')) {
-                        window.location.reload();
-                    }
+                    window.customConfirm('Form sudah terlalu lama dibuka. Halaman akan di-refresh untuk memperbarui token keamanan.', 'Perbarui Token').then(confirmed => {
+                        if (confirmed) {
+                            window.location.reload();
+                        }
+                    });
                 }
             });
 

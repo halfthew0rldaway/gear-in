@@ -26,7 +26,7 @@
                     Print Receipt
                 </a>
                 @if(in_array($order->status, [\App\Models\Order::STATUS_PENDING, \App\Models\Order::STATUS_PAID]))
-                    <form action="{{ route('orders.cancel', $order) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?');">
+                    <form id="cancelOrderForm" action="{{ route('orders.cancel', $order) }}" method="POST">
                         @csrf
                         <button type="submit" class="px-4 sm:px-5 py-2 rounded-full bg-red-600 text-white text-xs uppercase tracking-[0.4em] hover:bg-red-700 transition">
                             Cancel Order
@@ -164,5 +164,25 @@
             </ol>
         </div>
     </section>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cancelForm = document.getElementById('cancelOrderForm');
+            if (cancelForm) {
+                cancelForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const confirmed = await window.customConfirm(
+                        'Apakah Anda yakin ingin membatalkan pesanan ini?',
+                        'Batalkan Pesanan'
+                    );
+                    if (confirmed) {
+                        this.submit();
+                    }
+                });
+            }
+        });
+    </script>
+    @endpush
 @endsection
 
