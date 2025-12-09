@@ -441,6 +441,62 @@
         overflow: hidden;
     }
     
+    /* Float animation for minimized widget */
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+    
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    /* Consistent spacing utilities */
+    .section-padding {
+        @apply px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16;
+    }
+    
+    .container-max-width {
+        @apply max-w-6xl mx-auto;
+    }
+    
+    .card-padding {
+        @apply p-6 sm:p-8;
+    }
+    
+    /* Symmetric grid gaps */
+    .grid-gap-sm {
+        @apply gap-4 sm:gap-6;
+    }
+    
+    .grid-gap-md {
+        @apply gap-6 sm:gap-8;
+    }
+    
+    /* Consistent border radius */
+    .radius-card {
+        @apply rounded-2xl sm:rounded-3xl;
+    }
+    
+    .radius-button {
+        @apply rounded-full;
+    }
+    
+    /* Consistent shadow */
+    .shadow-card {
+        @apply shadow-lg shadow-gray-200/50;
+    }
+    
+    /* Performance: GPU acceleration for animations */
+    .gpu-accelerate {
+        transform: translateZ(0);
+        will-change: transform, opacity;
+    }
+    
     /* Respect reduced motion preference */
     @media (prefers-reduced-motion: reduce) {
         *,
@@ -452,8 +508,9 @@
             scroll-behavior: auto !important;
         }
         
-        .skeleton {
-            animation: none;
+        .skeleton,
+        .animate-float {
+            animation: none !important;
         }
     }
 }

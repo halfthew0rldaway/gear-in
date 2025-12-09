@@ -45,6 +45,9 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
+        
+        // Reset promo widget state on registration
+        $request->session()->forget(['promo_widget_closed', 'promo_widget_minimized']);
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

@@ -27,6 +27,9 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        
+        // Reset promo widget state on login
+        $request->session()->forget(['promo_widget_closed', 'promo_widget_minimized']);
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

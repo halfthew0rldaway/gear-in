@@ -199,14 +199,49 @@
     </div>
 
     <div class="totals">
+        @php
+            // Calculate product discounts from order items
+            $productDiscountsTotal = 0;
+            foreach ($order->items as $item) {
+                $product = \App\Models\Product::find($item->product_id);
+                if ($product && $product->hasActiveDiscount()) {
+                    // Get base price (we need to reconstruct it from unit_price)
+                    // Since unit_price is already discounted, we need to calculate backwards
+                    // For receipt, we'll show the discount if product still has active discount
+                    $basePrice = $product->price;
+                    if ($item->variant_id) {
+                        $variant = \App\Models\ProductVariant::find($item->variant_id);
+                        if ($variant) {
+                            $basePrice += $variant->price_adjustment;
+                        }
+                    }
+                    if ($product->hasActiveDiscount()) {
+                        $discount = $basePrice * ($product->discount_percentage / 100);
+                        $productDiscountsTotal += $discount * $item->quantity;
+                    }
+                }
+            }
+        @endphp
         <div class="total-row">
             <span>Subtotal</span>
             <span>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
         </div>
+        @if($productDiscountsTotal > 0)
+            <div class="total-row" style="color: #dc2626; font-weight: 500;">
+                <span>Diskon Produk</span>
+                <span>-Rp {{ number_format($productDiscountsTotal, 0, ',', '.') }}</span>
+            </div>
+        @endif
         <div class="total-row">
             <span>Shipping Fee</span>
             <span>Rp {{ number_format($order->shipping_fee, 0, ',', '.') }}</span>
         </div>
+        @if($order->discount > 0)
+            <div class="total-row" style="color: #dc2626; font-weight: 500;">
+                <span>Diskon Voucher{{ $order->voucher ? ' (' . $order->voucher->code . ')' : '' }}</span>
+                <span>-Rp {{ number_format($order->discount, 0, ',', '.') }}</span>
+            </div>
+        @endif
         <div class="total-row final">
             <span>Total</span>
             <span>Rp {{ number_format($order->total, 0, ',', '.') }}</span>

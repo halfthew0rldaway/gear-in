@@ -46,14 +46,46 @@
             </div>
             <div class="bg-white border border-gray-200 rounded-3xl p-6 space-y-3">
                 <p class="text-xs uppercase tracking-[0.5em] text-gray-400">Ringkasan</p>
+                @php
+                    // Calculate product discounts from order items
+                    $productDiscountsTotal = 0;
+                    foreach ($order->items as $item) {
+                        $product = \App\Models\Product::find($item->product_id);
+                        if ($product && $product->hasActiveDiscount()) {
+                            $basePrice = $product->price;
+                            if ($item->variant_id) {
+                                $variant = \App\Models\ProductVariant::find($item->variant_id);
+                                if ($variant) {
+                                    $basePrice += $variant->price_adjustment;
+                                }
+                            }
+                            if ($product->hasActiveDiscount()) {
+                                $discount = $basePrice * ($product->discount_percentage / 100);
+                                $productDiscountsTotal += $discount * $item->quantity;
+                            }
+                        }
+                    }
+                @endphp
                 <div class="flex justify-between text-sm text-gray-500">
                     <span>Subtotal</span>
                     <span>{{ 'Rp '.number_format($order->subtotal, 0, ',', '.') }}</span>
                 </div>
+                @if($productDiscountsTotal > 0)
+                    <div class="flex justify-between text-sm">
+                        <span class="text-red-600">Diskon Produk</span>
+                        <span class="text-red-600">-{{ 'Rp '.number_format($productDiscountsTotal, 0, ',', '.') }}</span>
+                    </div>
+                @endif
                 <div class="flex justify-between text-sm text-gray-500">
                     <span>Pengiriman</span>
                     <span>{{ 'Rp '.number_format($order->shipping_fee, 0, ',', '.') }}</span>
                 </div>
+                @if($order->discount > 0)
+                    <div class="flex justify-between text-sm">
+                        <span class="text-red-600">Diskon Voucher{{ $order->voucher ? ' (' . $order->voucher->code . ')' : '' }}</span>
+                        <span class="text-red-600">-{{ 'Rp '.number_format($order->discount, 0, ',', '.') }}</span>
+                    </div>
+                @endif
                 <div class="flex justify-between text-lg font-semibold border-t border-gray-100 pt-4">
                     <span>Total</span>
                     <span>{{ 'Rp '.number_format($order->total, 0, ',', '.') }}</span>

@@ -22,6 +22,13 @@
             </div>
         @endif
 
+        @if($product->hasActiveDiscount())
+            <!-- Discount Badge -->
+            <div class="absolute top-3 right-3 z-10 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-lg">
+                -{{ number_format($product->discount_percentage, 0) }}%
+            </div>
+        @endif
+
         @if ($hasImages && $firstImage)
             <img src="{{ $firstImage }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
         @else
@@ -36,7 +43,14 @@
         <a href="{{ route('products.show', $product) }}" class="text-lg font-semibold block line-clamp-2 min-h-[3.5rem]">{{ $product->name }}</a>
         <p class="text-sm text-gray-500 line-clamp-2 flex-1">{{ $product->summary }}</p>
         <div class="flex items-center justify-between pt-1 mt-auto">
-            <p class="text-base font-semibold">{{ $product->formatted_price }}</p>
+            <div class="flex items-center gap-2">
+                @if($product->hasActiveDiscount())
+                    <span class="text-base font-bold text-red-600">{{ $product->formatted_final_price }}</span>
+                    <span class="text-xs text-gray-400 line-through">{{ $product->formatted_price }}</span>
+                @else
+                    <p class="text-base font-semibold">{{ $product->formatted_price }}</p>
+                @endif
+            </div>
             @if($hasRating)
                 <div class="flex items-center gap-1">
                     <span class="text-yellow-500 text-sm rating-star">★</span>

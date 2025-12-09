@@ -23,10 +23,16 @@ class Product extends Model
         'image_path',
         'is_featured',
         'is_active',
+        'discount_percentage',
+        'discount_starts_at',
+        'discount_expires_at',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
+        'discount_percentage' => 'decimal:2',
+        'discount_starts_at' => 'datetime',
+        'discount_expires_at' => 'datetime',
         'is_featured' => 'boolean',
         'is_active' => 'boolean',
         'specifications' => 'array',
@@ -97,5 +103,46 @@ class Product extends Model
     public function getFormattedPriceAttribute(): string
     {
         return 'Rp ' . number_format($this->price, 0, ',', '.');
+    }
+
+    /**
+     * Check if product has active discount
+     */
+    public function hasActiveDiscount(): bool
+    {
+        if ($this->discount_percentage <= 0) {
+            return false;
+        }
+
+        $now = now();
+        if ($this->discount_starts_at && $now < $this->discount_starts_at) {
+            return false;
+        }
+        if ($this->discount_expires_at && $now > $this->discount_expires_at) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get final price after discount
+     */
+    public function getFinalPriceAttribute(): float
+    {
+        if (!$this->hasActiveDiscount()) {
+            return (float) $this->price;
+        }
+
+        $discount = $this->price * ($this->discount_percentage / 100);
+        return (float) ($this->price - $discount);
+    }
+
+    /**
+     * Get formatted final price
+     */
+    public function getFormattedFinalPriceAttribute(): string
+    {
+        return 'Rp ' . number_format($this->final_price, 0, ',', '.');
     }
 }

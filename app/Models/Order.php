@@ -21,6 +21,7 @@ class Order extends Model
         'code',
         'subtotal',
         'shipping_fee',
+        'discount',
         'total',
         'status',
         'payment_method',
@@ -41,9 +42,15 @@ class Order extends Model
     protected $casts = [
         'subtotal' => 'decimal:2',
         'shipping_fee' => 'decimal:2',
+        'discount' => 'decimal:2',
         'total' => 'decimal:2',
         'placed_at' => 'datetime',
     ];
+
+    public function voucher()
+    {
+        return $this->belongsTo(Voucher::class);
+    }
 
     protected static function booted(): void
     {

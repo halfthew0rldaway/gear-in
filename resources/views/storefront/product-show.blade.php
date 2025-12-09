@@ -112,7 +112,19 @@
                         <p class="text-sm sm:text-base text-gray-500 leading-relaxed">{{ $product->summary }}</p>
                     @endif
                     <div class="flex flex-wrap items-center gap-3 sm:gap-4 pt-1">
-                        <p class="text-xl sm:text-2xl font-semibold">{{ $product->formatted_price }}</p>
+                        <div class="flex items-center gap-3">
+                            @if($product->hasActiveDiscount())
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xl sm:text-2xl font-bold text-red-600">{{ $product->formatted_final_price }}</span>
+                                    <span class="text-sm sm:text-base text-gray-400 line-through">{{ $product->formatted_price }}</span>
+                                </div>
+                                <span class="text-xs font-bold text-red-500 bg-red-50 px-2.5 py-1 rounded">
+                                    -{{ number_format($product->discount_percentage, 0) }}%
+                                </span>
+                            @else
+                                <p class="text-xl sm:text-2xl font-semibold">{{ $product->formatted_price }}</p>
+                            @endif
+                        </div>
                         @if($product->approvedReviews->count() > 0)
                             <div class="flex items-center gap-2">
                                 <span class="text-yellow-500 text-lg">★</span>

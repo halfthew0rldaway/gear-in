@@ -695,8 +695,41 @@ window.staggerAnimation = staggerAnimation;
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-stagger]').forEach(container => {
         const delay = parseInt(container.dataset.stagger) || 50;
-        const selector = container.dataset.staggerSelector || '> *';
-        const items = container.querySelectorAll(selector);
+        let selector = container.dataset.staggerSelector || '> *';
+        
+        let items = [];
+        
+        // Fix invalid selector: if selector starts with '>', use :scope > selector
+        if (selector.trim().startsWith('>')) {
+            // Use :scope to make it a valid selector
+            const childSelector = selector.trim().substring(1).trim();
+            try {
+                items = container.querySelectorAll(`:scope > ${childSelector}`);
+            } catch (e) {
+                // Fallback: get direct children and filter
+                const allChildren = Array.from(container.children);
+                if (childSelector === '*') {
+                    items = allChildren;
+                } else {
+                    items = allChildren.filter(child => {
+                        try {
+                            return child.matches(childSelector);
+                        } catch (err) {
+                            return false;
+                        }
+                    });
+                }
+            }
+        } else {
+            // Regular selector
+            try {
+                items = container.querySelectorAll(selector);
+            } catch (e) {
+                console.warn('Invalid stagger selector:', selector, e);
+                // Fallback to direct children
+                items = Array.from(container.children);
+            }
+        }
         
         items.forEach((item, index) => {
             item.style.opacity = '0';

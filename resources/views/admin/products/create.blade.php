@@ -33,6 +33,26 @@
                 <input type="text" name="summary" value="{{ old('summary') }}" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900 focus-ring">
             </label>
         </div>
+        
+        <!-- Discount Section -->
+        <div class="border-t border-gray-200 pt-6 mt-6">
+            <p class="text-xs uppercase tracking-[0.4em] text-gray-400 mb-4">Diskon Produk</p>
+            <div class="grid sm:grid-cols-3 gap-4">
+                <label class="text-xs uppercase tracking-[0.4em] text-gray-400 block">
+                    Persentase Diskon (%)
+                    <input type="number" name="discount_percentage" value="{{ old('discount_percentage', 0) }}" min="0" max="100" step="0.01" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900 focus-ring">
+                    <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ada diskon</p>
+                </label>
+                <label class="text-xs uppercase tracking-[0.4em] text-gray-400 block">
+                    Mulai Diskon
+                    <input type="datetime-local" name="discount_starts_at" value="{{ old('discount_starts_at') }}" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900 focus-ring">
+                </label>
+                <label class="text-xs uppercase tracking-[0.4em] text-gray-400 block">
+                    Berakhir Diskon
+                    <input type="datetime-local" name="discount_expires_at" value="{{ old('discount_expires_at') }}" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900 focus-ring">
+                </label>
+            </div>
+        </div>
         <label class="text-xs uppercase tracking-[0.4em] text-gray-400 block">
             Deskripsi
             <textarea name="description" rows="5" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:border-gray-900 focus:ring-gray-900 focus-ring">{{ old('description') }}</textarea>

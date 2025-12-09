@@ -45,7 +45,7 @@ class OrderController extends Controller
     {
         abort_unless($order->user_id === $request->user()->id, 403);
 
-        $order->load('items.product', 'statusHistories.user');
+        $order->load('items.product', 'statusHistories.user', 'voucher');
         
         // Load reviews for products in this order
         $productIds = $order->items->pluck('product_id')->unique();
@@ -61,6 +61,8 @@ class OrderController extends Controller
     public function receipt(Request $request, Order $order): View
     {
         abort_unless($order->user_id === $request->user()->id, 403);
+        
+        $order->load('items.product', 'voucher');
 
         $order->load('items', 'statusHistories.user');
 

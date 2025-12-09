@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckoutRequest;
 use App\Services\CartService;
+use App\Services\VoucherService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -34,8 +36,10 @@ class CheckoutController extends Controller
         ],
     ];
 
-    public function __construct(private readonly CartService $cartService)
-    {
+    public function __construct(
+        private readonly CartService $cartService,
+        private readonly VoucherService $voucherService
+    ) {
     }
 
     public function index(Request $request): View|RedirectResponse
@@ -164,9 +168,17 @@ class CheckoutController extends Controller
                     ]);
                 }
 
-                $unitPrice = $product->price;
+                $basePrice = $product->price;
                 if ($variant) {
-                    $unitPrice += $variant->price_adjustment;
+                    $basePrice += $variant->price_adjustment;
+                }
+
+                // Apply product discount
+                $unitPrice = $basePrice;
+                $productDiscount = 0;
+                if ($product->hasActiveDiscount()) {
+                    $productDiscount = $basePrice * ($product->discount_percentage / 100);
+                    $unitPrice = $basePrice - $productDiscount;
                 }
 
                 $lineTotal = $unitPrice * $item->quantity;
@@ -189,11 +201,24 @@ class CheckoutController extends Controller
             }
 
             $shippingFee = $shippingOption['fee'];
-            $total = $subtotal + $shippingFee;
+            $voucherDiscount = 0;
+            $voucher = null;
+
+            // Apply voucher if provided (voucher discount applies to subtotal after product discounts)
+            if (!empty($data['voucher_code'])) {
+                $voucherResult = $this->voucherService->validate($data['voucher_code'], $user, $subtotal);
+                if ($voucherResult['valid']) {
+                    $voucher = $voucherResult['voucher'];
+                    $voucherDiscount = $voucherResult['discount'];
+                }
+            }
+
+            $total = max(0, $subtotal + $shippingFee - $voucherDiscount);
 
             $order = $user->orders()->create([
                 'subtotal' => $subtotal,
                 'shipping_fee' => $shippingFee,
+                'discount' => $voucherDiscount,
                 'total' => $total,
                 'payment_method' => $data['payment_method'],
                 'shipping_method' => $data['shipping_method'],
@@ -214,6 +239,15 @@ class CheckoutController extends Controller
                 $lineItem['product']->decrement('stock', $lineItem['payload']['quantity']);
                 if ($lineItem['variant']) {
                     $lineItem['variant']->decrement('stock', $lineItem['payload']['quantity']);
+                }
+            }
+
+            // Apply voucher usage and save voucher_id to order
+            if ($voucher) {
+                $this->voucherService->apply($voucher, $user, $order);
+                // Update order with voucher_id if column exists
+                if (Schema::hasColumn('orders', 'voucher_id')) {
+                    $order->update(['voucher_id' => $voucher->id]);
                 }
             }
 

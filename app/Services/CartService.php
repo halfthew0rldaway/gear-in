@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\Voucher;
 use Illuminate\Support\Collection;
 
 class CartService
@@ -63,7 +64,7 @@ class CartService
         $user->cartItems()->delete();
     }
 
-    public function totals(User $user): array
+    public function totals(User $user, ?Voucher $voucher = null): array
     {
         $items = $this->getItems($user);
         $subtotal = $items->sum(function (CartItem $item) {
@@ -71,19 +72,43 @@ class CartService
             if ($item->variant) {
                 $price += $item->variant->price_adjustment;
             }
+            // Apply product discount
+            if ($item->product->discount_percentage > 0) {
+                $now = now();
+                $isDiscountActive = true;
+                if ($item->product->discount_starts_at && $now < $item->product->discount_starts_at) {
+                    $isDiscountActive = false;
+                }
+                if ($item->product->discount_expires_at && $now > $item->product->discount_expires_at) {
+                    $isDiscountActive = false;
+                }
+                if ($isDiscountActive) {
+                    $discount = $price * ($item->product->discount_percentage / 100);
+                    $price = $price - $discount;
+                }
+            }
             return $item->quantity * $price;
         });
         $shipping = $subtotal > 0 ? 15000 : 0;
+        $discount = 0;
+
+        if ($voucher && $voucher->isValid($user, $subtotal)) {
+            $discount = $voucher->calculateDiscount($subtotal);
+        }
+
+        $total = $subtotal + $shipping - $discount;
 
         return [
             'items' => $items,
             'subtotal' => $subtotal,
             'shipping' => $shipping,
-            'total' => $subtotal + $shipping,
+            'discount' => $discount,
+            'voucher' => $voucher,
+            'total' => max(0, $total),
         ];
     }
 
-    public function totalsForItems(User $user, array $itemIds): array
+    public function totalsForItems(User $user, array $itemIds, ?Voucher $voucher = null): array
     {
         $items = $user->cartItems()
             ->whereIn('id', $itemIds)
@@ -96,15 +121,39 @@ class CartService
             if ($item->variant) {
                 $price += $item->variant->price_adjustment;
             }
+            // Apply product discount
+            if ($item->product->discount_percentage > 0) {
+                $now = now();
+                $isDiscountActive = true;
+                if ($item->product->discount_starts_at && $now < $item->product->discount_starts_at) {
+                    $isDiscountActive = false;
+                }
+                if ($item->product->discount_expires_at && $now > $item->product->discount_expires_at) {
+                    $isDiscountActive = false;
+                }
+                if ($isDiscountActive) {
+                    $discount = $price * ($item->product->discount_percentage / 100);
+                    $price = $price - $discount;
+                }
+            }
             return $item->quantity * $price;
         });
         $shipping = $subtotal > 0 ? 15000 : 0;
+        $discount = 0;
+
+        if ($voucher && $voucher->isValid($user, $subtotal)) {
+            $discount = $voucher->calculateDiscount($subtotal);
+        }
+
+        $total = $subtotal + $shipping - $discount;
 
         return [
             'items' => $items,
             'subtotal' => $subtotal,
             'shipping' => $shipping,
-            'total' => $subtotal + $shipping,
+            'discount' => $discount,
+            'voucher' => $voucher,
+            'total' => max(0, $total),
         ];
     }
 }

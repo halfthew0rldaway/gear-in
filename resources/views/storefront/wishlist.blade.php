@@ -14,7 +14,13 @@
                 @foreach ($wishlists as $wishlist)
                     <div class="bg-white border border-gray-200 rounded-[32px] p-6 space-y-4 scroll-reveal h-full flex flex-col">
                         <a href="{{ route('products.show', $wishlist->product) }}" class="block flex-1 flex flex-col">
-                            <div class="aspect-square rounded-2xl bg-gray-50 flex items-center justify-center overflow-hidden mb-4 flex-shrink-0">
+                            <div class="aspect-square rounded-2xl bg-gray-50 flex items-center justify-center overflow-hidden mb-4 flex-shrink-0 relative">
+                                @if($wishlist->product->hasActiveDiscount())
+                                    <!-- Discount Badge -->
+                                    <div class="absolute top-3 right-3 z-10 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-lg">
+                                        -{{ number_format($wishlist->product->discount_percentage, 0) }}%
+                                    </div>
+                                @endif
                                 @php
                                     $images = $wishlist->product->images;
                                     $hasImages = $images->count() > 0;
@@ -31,7 +37,16 @@
                             <div class="flex-1 flex flex-col">
                                 <p class="text-xs uppercase tracking-[0.4em] text-gray-400">{{ $wishlist->product->category->name }}</p>
                                 <p class="font-semibold line-clamp-2 min-h-[3rem] mt-1">{{ $wishlist->product->name }}</p>
-                                <p class="text-sm text-gray-500 mt-auto pt-2">{{ $wishlist->product->formatted_price }}</p>
+                                <div class="mt-auto pt-2">
+                                    @if($wishlist->product->hasActiveDiscount())
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm font-bold text-red-600">{{ $wishlist->product->formatted_final_price }}</span>
+                                            <span class="text-xs text-gray-400 line-through">{{ $wishlist->product->formatted_price }}</span>
+                                        </div>
+                                    @else
+                                        <p class="text-sm text-gray-500">{{ $wishlist->product->formatted_price }}</p>
+                                    @endif
+                                </div>
                             </div>
                         </a>
                         <div class="flex items-center gap-2 pt-4 border-t border-gray-100 flex-shrink-0">

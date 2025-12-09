@@ -56,6 +56,11 @@ Route::middleware(['auth', 'can:access-customer'])->group(function () {
     Route::post('/chat/{conversation}/message', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
     Route::post('/chat/send-ajax', [\App\Http\Controllers\ChatController::class, 'sendMessageAjax'])->name('chat.send-ajax');
     Route::get('/chat/{conversation}/messages', [\App\Http\Controllers\ChatController::class, 'getMessages'])->name('chat.messages');
+    
+    Route::post('/voucher/validate', [\App\Http\Controllers\VoucherController::class, 'validate'])->name('voucher.validate');
+    Route::post('/promo-widget/close', [\App\Http\Controllers\PromoWidgetController::class, 'close'])->name('promo-widget.close');
+    Route::post('/promo-widget/minimize', [\App\Http\Controllers\PromoWidgetController::class, 'minimize'])->name('promo-widget.minimize');
+    Route::post('/promo-widget/reset', [\App\Http\Controllers\PromoWidgetController::class, 'reset'])->name('promo-widget.reset');
 });
 
 Route::prefix('admin')
@@ -81,6 +86,8 @@ Route::prefix('admin')
         Route::post('chat/{conversation}/message', [\App\Http\Controllers\Admin\ChatController::class, 'sendMessage'])->name('chat.send');
         Route::get('chat/{conversation}/messages', [\App\Http\Controllers\Admin\ChatController::class, 'getMessages'])->name('chat.messages');
         Route::patch('chat/{conversation}/status', [\App\Http\Controllers\Admin\ChatController::class, 'updateStatus'])->name('chat.update-status');
+        
+        Route::resource('vouchers', \App\Http\Controllers\Admin\VoucherController::class);
     });
 
 Route::middleware('auth')->group(function () {

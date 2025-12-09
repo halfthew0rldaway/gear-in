@@ -98,6 +98,9 @@
         
         <!-- Chat Widget -->
         <x-chat-widget />
+        
+        <!-- Promo Widget -->
+        <x-promo-widget />
     </body>
 </html>
 

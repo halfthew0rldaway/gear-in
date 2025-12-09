@@ -33,6 +33,7 @@ class CheckoutRequest extends FormRequest
             'notes' => ['nullable', 'string', 'max:500'],
             'payment_method' => ['required', Rule::in(['qris', 'bank_transfer', 'cod', 'ewallet'])],
             'shipping_method' => ['required', Rule::in(['standard', 'express', 'same_day'])],
+            'voucher_code' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

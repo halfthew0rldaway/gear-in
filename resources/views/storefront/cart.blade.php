@@ -28,12 +28,21 @@
                             <input type="checkbox" value="{{ $item->id }}" class="item-checkbox rounded border-gray-300 text-gray-900 focus:ring-gray-900 w-4 h-4" checked>
                         </div>
                         <div class="sm:col-span-4">
-                            <p class="text-xs uppercase tracking-[0.4em] text-gray-400">{{ $item->product->category->name }}</p>
-                            <h2 class="text-base sm:text-lg font-semibold mt-1">{{ $item->product->name }}</h2>
-                            @if($item->variant)
-                                <p class="text-sm text-gray-600 font-medium mt-1">{{ $item->variant->name }}</p>
-                            @endif
-                            <p class="text-xs sm:text-sm text-gray-500 mt-1 line-clamp-2">{{ $item->product->summary }}</p>
+                            <div class="flex items-start gap-2">
+                                @if($item->product->hasActiveDiscount())
+                                    <span class="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded flex-shrink-0 mt-0.5">
+                                        -{{ number_format($item->product->discount_percentage, 0) }}%
+                                    </span>
+                                @endif
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs uppercase tracking-[0.4em] text-gray-400">{{ $item->product->category->name }}</p>
+                                    <h2 class="text-base sm:text-lg font-semibold mt-1">{{ $item->product->name }}</h2>
+                                    @if($item->variant)
+                                        <p class="text-sm text-gray-600 font-medium mt-1">{{ $item->variant->name }}</p>
+                                    @endif
+                                    <p class="text-xs sm:text-sm text-gray-500 mt-1 line-clamp-2">{{ $item->product->summary }}</p>
+                                </div>
+                            </div>
                         </div>
                         <div class="sm:col-span-4 flex flex-col sm:flex-row sm:items-center gap-3">
                             <div class="flex items-center gap-2">
@@ -50,15 +59,26 @@
                             </div>
                         </div>
                         <div class="sm:col-span-3 flex items-center justify-between sm:justify-end">
-                            <p class="text-sm sm:text-base font-semibold item-price">
+                            <div class="text-right">
                                 @php
-                                    $price = $item->product->price;
+                                    $basePrice = $item->product->price;
                                     if ($item->variant) {
-                                        $price += $item->variant->price_adjustment;
+                                        $basePrice += $item->variant->price_adjustment;
                                     }
+                                    $finalPrice = $basePrice;
+                                    if ($item->product->hasActiveDiscount()) {
+                                        $discount = $basePrice * ($item->product->discount_percentage / 100);
+                                        $finalPrice = $basePrice - $discount;
+                                    }
+                                    $totalPrice = $finalPrice * $item->quantity;
                                 @endphp
-                                {{ 'Rp '.number_format($price * $item->quantity, 0, ',', '.') }}
-                            </p>
+                                @if($item->product->hasActiveDiscount() && $finalPrice < $basePrice)
+                                    <p class="text-sm sm:text-base font-bold text-red-600 item-price">{{ 'Rp '.number_format($totalPrice, 0, ',', '.') }}</p>
+                                    <p class="text-xs text-gray-400 line-through">{{ 'Rp '.number_format($basePrice * $item->quantity, 0, ',', '.') }}</p>
+                                @else
+                                    <p class="text-sm sm:text-base font-semibold item-price">{{ 'Rp '.number_format($totalPrice, 0, ',', '.') }}</p>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 @empty
@@ -117,13 +137,18 @@
             const itemData = {};
             @foreach($cartItems as $item)
                 @php
-                    $price = $item->product->price;
+                    $basePrice = $item->product->price;
                     if ($item->variant) {
-                        $price += $item->variant->price_adjustment;
+                        $basePrice += $item->variant->price_adjustment;
+                    }
+                    $finalPrice = $basePrice;
+                    if ($item->product->hasActiveDiscount()) {
+                        $discount = $basePrice * ($item->product->discount_percentage / 100);
+                        $finalPrice = $basePrice - $discount;
                     }
                 @endphp
                 itemData[{{ $item->id }}] = {
-                    unitPrice: {{ $price }},
+                    unitPrice: {{ $finalPrice }},
                     quantity: {{ $item->quantity }},
                     maxStock: {{ $item->variant ? $item->variant->stock : $item->product->stock }}
                 };

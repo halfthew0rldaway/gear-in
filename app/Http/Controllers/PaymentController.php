@@ -52,6 +52,8 @@ class PaymentController extends Controller
         // Only show payment page if order is pending/waiting payment
         abort_unless(in_array($order->payment_status, ['waiting', 'unpaid']), 403, 'Pesanan ini sudah dibayar atau tidak memerlukan pembayaran.');
 
+        $order->load('items.product', 'voucher');
+
         return view('storefront.payment.show', [
             'order' => $order,
             'bankAccounts' => $this->bankAccounts,

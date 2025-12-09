@@ -39,6 +39,7 @@
                     <a href="{{ route('admin.categories.index') }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('admin.categories.*') ? 'bg-gray-900 text-white' : 'hover:bg-gray-100' }}">Kategori</a>
                     <a href="{{ route('admin.orders.index') }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('admin.orders.*') ? 'bg-gray-900 text-white' : 'hover:bg-gray-100' }}">Pesanan</a>
                     <a href="{{ route('admin.reviews.index') }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('admin.reviews.*') ? 'bg-gray-900 text-white' : 'hover:bg-gray-100' }}">Reviews</a>
+                    <a href="{{ route('admin.vouchers.index') }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('admin.vouchers.*') ? 'bg-gray-900 text-white' : 'hover:bg-gray-100' }}">Voucher</a>
                     <a href="{{ route('admin.chat.index') }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('admin.chat.*') ? 'bg-gray-900 text-white' : 'hover:bg-gray-100' }}">Chat
                         @php
                             $unreadCount = \App\Models\Conversation::whereHas('messages', function ($query) {
