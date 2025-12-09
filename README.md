@@ -2,7 +2,9 @@
 
 **Tugas Besar Mata Kuliah Pemrograman Web Lanjut**
 
-Platform e-commerce modern berbasis web yang dibangun menggunakan Laravel 12, dilengkapi dengan katalog produk, keranjang belanja, manajemen pesanan, sistem review, wishlist, dan dashboard administrasi.
+Platform e-commerce modern berbasis web yang dibangun menggunakan Laravel 12, dilengkapi dengan katalog produk, keranjang belanja, manajemen pesanan, sistem review, wishlist, dashboard administrasi, sistem discount/voucher, dan promo widget dengan animasi yang menarik.
+
+> **💡 Catatan untuk Tester/Evaluator:** Aplikasi ini **mendukung MySQL dan SQLite**. Untuk kemudahan testing dan monitoring database, **direkomendasikan menggunakan MySQL dengan HeidiSQL**. Namun, Anda bebas menggunakan database sesuai preferensi Anda.
 
 > **Catatan:** Project ini dikembangkan sebagai tugas besar untuk mata kuliah Pemrograman Web Lanjut. Fitur-fitur yang tersedia masih dalam tahap formalitas dan fungsionalitas dasar untuk memenuhi requirements tugas. Meskipun demikian, struktur dan kode yang ada dapat dikembangkan lebih lanjut untuk keperluan production dan real-world implementation.
 
@@ -26,17 +28,32 @@ Sebelum melakukan instalasi, pastikan sistem Anda telah memenuhi persyaratan ber
 1. **PHP 8.2 atau lebih tinggi**
    - Verifikasi versi: `php -v`
    - Unduh: [PHP Downloads](https://www.php.net/downloads.php)
-   - Ekstensi yang diperlukan: `pdo`, `pdo_sqlite`, `mbstring`, `xml`, `ctype`, `json`, `openssl`, `tokenizer`, `fileinfo`
+   - Ekstensi yang diperlukan: `pdo`, `pdo_mysql`, `pdo_sqlite`, `mbstring`, `xml`, `ctype`, `json`, `openssl`, `tokenizer`, `fileinfo`
+   
+2. **Database (Pilih salah satu):**
+   
+   **Opsi A - MySQL Server** (Recommended untuk Testing)
+   - Install MySQL Server (XAMPP, WAMP, atau standalone MySQL)
+   - Verifikasi: `mysql --version` atau melalui phpMyAdmin
+   - **HeidiSQL** (Recommended untuk Database Management)
+     - Unduh: [HeidiSQL Downloads](https://www.heidisql.com/download.php)
+     - Tool untuk mengelola database MySQL dengan GUI yang user-friendly
+     - Cocok untuk evaluator yang ingin melihat dan query database dengan mudah
+   
+   **Opsi B - SQLite** (Simple & Quick)
+   - Tidak perlu install database server
+   - File-based database, langsung bisa digunakan
+   - Cocok untuk quick testing tanpa setup tambahan
 
 2. **Composer** (PHP Dependency Manager)
    - Verifikasi versi: `composer --version`
    - Unduh: [Composer Downloads](https://getcomposer.org/download/)
 
-3. **Node.js 18.x atau lebih tinggi** (untuk frontend assets)
+4. **Node.js 18.x atau lebih tinggi** (untuk frontend assets)
    - Verifikasi versi: `node -v`
    - Unduh: [Node.js Downloads](https://nodejs.org/)
 
-4. **npm** (termasuk dalam instalasi Node.js)
+5. **npm** (termasuk dalam instalasi Node.js)
    - Verifikasi versi: `npm -v`
 
 ### Software Opsional
@@ -91,33 +108,83 @@ Jalankan perintah berikut untuk menginstal dependencies frontend (Vite, Tailwind
 
 3. **Konfigurasi Database:**
    
-   Aplikasi secara default menggunakan SQLite. File `.env` sudah dikonfigurasi dengan pengaturan berikut:
+   Aplikasi ini mendukung **MySQL** dan **SQLite**. Anda bebas memilih sesuai kebutuhan.
+   
+   **💡 Recommended: MySQL dengan HeidiSQL (untuk kemudahan monitoring dan testing)**
+   
+   **Setup MySQL dengan HeidiSQL:**
+   
+   1. Install MySQL Server (XAMPP, WAMP, atau standalone MySQL)
+   2. Install HeidiSQL: [Download HeidiSQL](https://www.heidisql.com/download.php)
+   3. Buka HeidiSQL dan buat koneksi baru:
+      - Host: `127.0.0.1` atau `localhost`
+      - Port: `3306`
+      - User: `root`
+      - Password: (sesuaikan dengan MySQL Anda)
+   4. Buat database baru dengan nama `gearin`:
+      ```sql
+      CREATE DATABASE gearin CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+      ```
+   5. Update file `.env` dengan kredensial MySQL Anda:
+      ```
+      DB_CONNECTION=mysql
+      DB_HOST=127.0.0.1
+      DB_PORT=3306
+      DB_DATABASE=gearin
+      DB_USERNAME=root
+      DB_PASSWORD=your_password
+      ```
+   6. Jalankan migrations: `php artisan migrate`
+   7. Jalankan seeding: `php artisan db:seed`
+   
+   **Alternatif: SQLite (Lebih Simple untuk Quick Testing)**
+   
+   Jika Anda ingin menggunakan SQLite (lebih simple, tidak perlu setup MySQL), ubah konfigurasi di `.env`:
 
     DB_CONNECTION=sqlite
     DB_DATABASE=C:\absolute\path\to\database\database.sqlite
     SESSION_DRIVER=file
    
-   
-   **Untuk SQLite (Default):**
+   **Catatan untuk SQLite:**
    - Pastikan path di `DB_DATABASE` menggunakan absolute path (full path)
    - File database akan dibuat otomatis pada langkah berikutnya
-   
-   **Alternatif MySQL:**
-   Jika Anda lebih memilih menggunakan MySQL, ubah konfigurasi di `.env`:
-
-    DB_CONNECTION=mysql
-    DB_HOST=127.0.0.1
-    DB_PORT=3306
-    DB_DATABASE=gearin
-    DB_USERNAME=root
-    DB_PASSWORD=
+   - SQLite cocok untuk quick testing tanpa perlu setup database server
    
 
 ## 🗄️ Konfigurasi Database
 
-### Langkah 1: Membuat File Database SQLite
+### Langkah 1: Setup Database
 
-File database seharusnya sudah tersedia di `database/database.sqlite`. Jika belum, buat file tersebut:
+**Opsi A: MySQL dengan HeidiSQL (Recommended untuk Testing)**
+
+**Menggunakan HeidiSQL:**
+
+1. **Buka HeidiSQL** dan buat koneksi baru ke MySQL server Anda
+2. **Buat database baru:**
+   - Klik kanan pada koneksi > Create new > Database
+   - Nama database: `gearin`
+   - Collation: `utf8mb4_unicode_ci`
+   - Klik OK
+
+3. **Atau gunakan SQL command di HeidiSQL:**
+   ```sql
+   CREATE DATABASE gearin CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   ```
+
+4. **Verifikasi database sudah dibuat:**
+   - Database `gearin` harus muncul di list database di HeidiSQL
+
+5. **Update file `.env`** dengan konfigurasi MySQL (lihat langkah 3 di bagian Instalasi)
+
+**Keuntungan menggunakan MySQL/HeidiSQL:**
+- ✅ Mudah monitoring data via GUI
+- ✅ Bisa melihat struktur tabel dengan jelas
+- ✅ Bisa query langsung untuk testing
+- ✅ Cocok untuk evaluator yang ingin melihat database structure
+
+**Opsi B: SQLite (Simple & Quick)**
+
+Jika menggunakan SQLite, buat file database:
 
 **Windows:**
 
@@ -128,6 +195,11 @@ File database seharusnya sudah tersedia di `database/database.sqlite`. Jika belu
 
     touch database/database.sqlite
 
+**Keuntungan menggunakan SQLite:**
+- ✅ Tidak perlu setup database server
+- ✅ File-based, mudah untuk backup
+- ✅ Cocok untuk quick testing
+- ✅ Simple dan langsung bisa digunakan
 
 ### Langkah 2: Menjalankan Migrations
 
@@ -168,7 +240,21 @@ INFO  Seeding database.
 
 ### Langkah 4: Verifikasi Setup Database
 
-Untuk memverifikasi bahwa setup database berhasil, jalankan:
+**Jika menggunakan MySQL/HeidiSQL:**
+1. Buka database `gearin` di HeidiSQL
+2. Periksa tabel-tabel yang sudah dibuat:
+   - `users` - Seharusnya ada 3 user (2 admin, 1 customer)
+   - `products` - Seharusnya ada beberapa produk sample
+   - `categories` - Seharusnya ada beberapa kategori
+   - `vouchers` - Tabel untuk voucher/promo codes
+   - `orders` - Tabel untuk pesanan
+   - Dan tabel-tabel lainnya
+3. Anda bisa langsung query di HeidiSQL untuk melihat data
+
+**Jika menggunakan SQLite:**
+- Gunakan Laravel Tinker atau SQLite browser untuk melihat data
+
+**Menggunakan Laravel Tinker (Universal):**
 
     php artisan tinker
 
@@ -177,6 +263,7 @@ Kemudian di console tinker:
 
     DB::table('users')->count();  // Seharusnya mengembalikan 3
     DB::table('products')->count();  // Seharusnya mengembalikan beberapa produk
+    DB::table('vouchers')->count();  // Seharusnya 0 (belum ada voucher)
     exit
 
 
@@ -274,6 +361,14 @@ Setelah proses seeding selesai, Anda dapat menggunakan akun berikut untuk login:
 - ✅ **Variant Selection Dropdown** di katalog untuk produk bervarian
 - ✅ **Product Card Animations** dengan fade-in dan hover effects
 - ✅ **Smooth Animations** untuk semua interaksi (ringan dan performant)
+- ✅ **Sistem Discount/Voucher** dengan validasi lengkap
+- ✅ **Product Discount** dengan persentase dan periode aktif
+- ✅ **Voucher Codes** dengan berbagai tipe (percentage/fixed)
+- ✅ **Floating Promo Widget** dengan modal pop-up dan minimized button
+- ✅ **Promo Modal** menampilkan produk dengan discount aktif
+- ✅ **Custom Alert & Confirm Dialogs** menggantikan browser alerts
+- ✅ **UI/UX Improvements** dengan warna merah untuk discount
+- ✅ **Performance Optimizations** dengan Vite build optimizations
 
 ### Fitur Administrator
 
@@ -289,6 +384,11 @@ Setelah proses seeding selesai, Anda dapat menggunakan akun berikut untuk login:
 - ✅ **Chat Widget Floating untuk Admin** dengan daftar percakapan
 - ✅ **Balas Chat Langsung dari Widget** tanpa reload
 - ✅ **Activity Logging**
+- ✅ **Manajemen Voucher/Promo Codes** dengan CRUD lengkap
+- ✅ **Validasi Voucher** dengan minimum purchase, usage limit, expiry date
+- ✅ **Product Discount Management** dari admin panel
+- ✅ **Discount Display** di semua halaman (catalog, cart, checkout, receipt)
+- ✅ **Fancy Modal Animations** untuk promo widget dengan GPU acceleration
 
 ### Fitur Teknis
 
@@ -307,6 +407,12 @@ Setelah proses seeding selesai, Anda dapat menggunakan akun berikut untuk login:
 - ✅ **Stagger Animations** untuk product cards
 - ✅ **Micro-interactions** untuk button dan links
 - ✅ **Performance Optimized** animations (menggunakan transform dan opacity)
+- ✅ **Discount System** dengan product-level dan voucher-level discounts
+- ✅ **Voucher Usage Tracking** untuk monitoring penggunaan voucher
+- ✅ **Order Discount Integration** dengan perhitungan otomatis
+- ✅ **Receipt dengan Discount Info** menampilkan semua discount yang diterapkan
+- ✅ **Layout Consistency** dengan standardized spacing dan symmetry
+- ✅ **Vite Build Optimizations** dengan code splitting dan minification
 
 ## 💬 Fitur Chat System
 
@@ -380,6 +486,50 @@ Jika ingin upgrade ke real-time di masa depan:
 3. Ganti polling dengan WebSocket listener
 4. Database structure tetap sama, hanya mekanisme update yang berubah
 
+## 💰 Sistem Discount dan Voucher
+
+Aplikasi ini dilengkapi dengan sistem discount dan voucher yang lengkap:
+
+### Product Discount
+- **Persentase Discount:** Setiap produk dapat memiliki discount persentase
+- **Periode Aktif:** Discount dapat diatur dengan tanggal mulai dan berakhir
+- **Automatic Calculation:** Harga discount dihitung otomatis di semua halaman
+- **Visual Indicator:** Badge discount merah dengan animasi pulse
+- **Price Display:** Harga discount ditampilkan dengan warna merah, harga asli dengan strikethrough
+
+### Voucher System
+- **Tipe Voucher:**
+  - Percentage: Discount berdasarkan persentase (dengan max discount limit)
+  - Fixed: Discount dengan nominal tetap
+- **Validasi Lengkap:**
+  - Minimum purchase amount
+  - Usage limit (total dan per user)
+  - Expiry date
+  - Active/inactive status
+- **Usage Tracking:** Setiap penggunaan voucher dicatat untuk monitoring
+- **Admin Management:** CRUD lengkap untuk voucher dari admin panel
+
+### Promo Widget
+- **Floating Modal:** Modal pop-up di tengah layar saat pertama login
+- **Product List:** Menampilkan produk dengan discount aktif (maksimal 3 produk)
+- **Fancy Animations:** 
+  - Modal slide-up dengan backdrop blur
+  - Stagger animation untuk item produk
+  - Pulse glow untuk discount badge
+  - GPU-accelerated untuk performa optimal
+- **Minimized Widget:** Floating button di samping chat widget setelah modal ditutup
+- **Auto-hide:** Widget tidak muncul jika tidak ada produk discount
+
+### Discount Display
+Discount ditampilkan dengan konsisten di semua halaman:
+- ✅ **Catalog:** Badge discount dan harga merah
+- ✅ **Product Detail:** Badge dan harga discount
+- ✅ **Cart:** Badge dan harga discount per item
+- ✅ **Checkout:** Ringkasan discount produk dan voucher
+- ✅ **Payment:** Detail discount di ringkasan pesanan
+- ✅ **Order Detail:** Ringkasan discount lengkap
+- ✅ **Receipt:** Discount tercantum di receipt
+
 ## 🎨 Animasi dan Interaksi
 
 Aplikasi ini menggunakan kombinasi animasi CSS dan JavaScript yang ringan dan dioptimalkan untuk performa:
@@ -419,6 +569,9 @@ Semua animasi menggunakan teknik berikut untuk memastikan performa optimal:
 - ✅ **Reduced Motion Support:** Menghormati preferensi user untuk reduced motion
 - ✅ **No Layout Shifts:** Animasi tidak menyebabkan perubahan layout yang tidak diinginkan
 - ✅ **Passive Event Listeners:** Untuk scroll events yang lebih performant
+- ✅ **Promo Modal Animations:** Fancy slide-up dengan backdrop blur dan stagger effects
+- ✅ **Discount Badge Pulse:** Animasi pulse glow untuk menarik perhatian
+- ✅ **Vite Build Optimizations:** Code splitting, minification, terser compression
 
 ### Teknologi Animasi
 
@@ -474,12 +627,31 @@ shakeElement(document.getElementById('field'));
     composer dump-autoload
 
 
-### Masalah: "Database file does not exist"
+### Masalah: "Database file does not exist" (SQLite)
 
 **Solusi:**
 1. Pastikan file `database/database.sqlite` sudah ada
 2. Periksa file permissions (harus readable/writable)
 3. Verifikasi path di `.env` menggunakan absolute path
+
+**Catatan:** Jika menggunakan SQLite dan mengalami masalah, pertimbangkan untuk menggunakan MySQL/HeidiSQL yang lebih mudah dikelola.
+
+### Masalah: "Access denied for user" (MySQL)
+
+**Solusi:**
+1. Verifikasi kredensial MySQL di file `.env`:
+   ```
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=gearin
+   DB_USERNAME=root
+   DB_PASSWORD=your_password
+   ```
+2. Pastikan database `gearin` sudah dibuat di MySQL/HeidiSQL
+3. Pastikan user MySQL memiliki akses ke database tersebut
+4. Test koneksi di HeidiSQL terlebih dahulu sebelum menjalankan migrations
+5. **Alternatif:** Jika masalah persist, gunakan SQLite untuk quick testing
 
 ### Masalah: "Migration error" atau "Table already exists"
 
@@ -506,7 +678,7 @@ Periksa file `.env` Anda:
     SESSION_DRIVER=file
 
 
-### Masalah: "Permission denied" pada database file
+### Masalah: "Permission denied" pada database file (SQLite)
 
 **Solusi (Linux/Mac):**
 
@@ -518,6 +690,8 @@ Periksa file `.env` Anda:
 - Klik kanan pada file `database.sqlite`
 - Properties > Security
 - Pastikan user Anda memiliki Read & Write permissions
+
+**Catatan:** Jika menggunakan SQLite dan mengalami masalah permission, pertimbangkan untuk menggunakan MySQL/HeidiSQL yang lebih mudah dikelola.
 
 ### Masalah: Port 8000 sudah digunakan
 
@@ -596,7 +770,16 @@ Atau buat user baru secara manual:
 
 3. **Setup database:**
    
+   **Opsi A - MySQL dengan HeidiSQL (Recommended):**
+   - Buat database `gearin` di HeidiSQL
+   - Update `.env` dengan kredensial MySQL
+   
+   **Opsi B - SQLite (Simple):**
+   
    type nul > database\database.sqlite
+   
+   **Jalankan migrations dan seeding:**
+   
    php artisan migrate
    php artisan db:seed
    
@@ -619,7 +802,7 @@ Atau buat user baru secara manual:
 ### System Requirements yang Terpenuhi
 
 - ✅ Modern PHP framework (Laravel 12)
-- ✅ Database integration (SQLite/MySQL)
+- ✅ Database integration (MySQL dan SQLite - bebas pilih sesuai kebutuhan)
 - ✅ User authentication dan authorization
 - ✅ CRUD operations lengkap
 - ✅ E-commerce functionality (cart, checkout, orders)
@@ -628,6 +811,120 @@ Atau buat user baru secara manual:
 - ✅ Product variants dan specifications
 - ✅ Review system dengan admin reply
 - ✅ Image management dengan processing
+- ✅ Discount/Voucher system dengan validasi lengkap
+- ✅ Product discount dengan periode aktif
+- ✅ Voucher codes dengan berbagai tipe dan limit
+- ✅ Promo widget dengan fancy animations
+- ✅ Custom UI components (alerts, confirms, toasts)
+- ✅ Performance optimizations (Vite build, code splitting)
+- ✅ Layout consistency dan symmetry
+
+## 🧪 Panduan untuk Tester/Evaluator
+
+### Database Setup
+
+**💡 Recommended: MySQL dengan HeidiSQL**
+
+Menggunakan MySQL dengan HeidiSQL direkomendasikan karena:
+- ✅ Mudah monitoring dan melihat data via GUI
+- ✅ Bisa query langsung untuk testing
+- ✅ Bisa melihat struktur tabel dengan jelas
+- ✅ Cocok untuk evaluator yang ingin melihat database structure
+
+**Setup MySQL dengan HeidiSQL:**
+
+1. **Install MySQL Server:**
+   - XAMPP, WAMP, atau standalone MySQL
+   - Pastikan MySQL service berjalan
+
+2. **Install HeidiSQL:**
+   - Download dari: https://www.heidisql.com/download.php
+   - Install dan buka aplikasi
+
+3. **Setup Database:**
+   - Buat koneksi baru di HeidiSQL
+   - Host: `127.0.0.1`, Port: `3306`
+   - User: `root`, Password: (sesuaikan)
+   - Buat database `gearin` dengan collation `utf8mb4_unicode_ci`
+
+4. **Konfigurasi `.env`:**
+   ```
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=gearin
+   DB_USERNAME=root
+   DB_PASSWORD=your_password
+   ```
+
+5. **Run Migrations:**
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
+
+6. **Verifikasi di HeidiSQL:**
+   - Buka database `gearin`
+   - Periksa semua tabel sudah dibuat
+   - Periksa data sample sudah ter-seed
+
+**Alternatif: SQLite (Simple & Quick)**
+
+Jika Anda lebih suka menggunakan SQLite (tidak perlu setup database server):
+- Ikuti langkah setup SQLite di bagian [Konfigurasi Database](#-konfigurasi-database)
+- SQLite cocok untuk quick testing tanpa perlu setup MySQL
+
+### Database Tables untuk Testing
+
+Berikut adalah tabel-tabel penting yang ada di database:
+
+**User & Authentication:**
+- `users` - User accounts (admin dan customer)
+- `password_reset_tokens` - Password reset tokens
+
+**Products & Catalog:**
+- `categories` - Kategori produk
+- `products` - Produk dengan discount fields
+- `product_variants` - Varian produk
+- `product_images` - Multiple images per produk
+
+**Shopping:**
+- `cart_items` - Item di keranjang
+- `wishlists` - Wishlist customer
+
+**Orders:**
+- `orders` - Pesanan dengan discount dan voucher info
+- `order_items` - Item dalam pesanan
+- `order_status_histories` - Timeline status pesanan
+
+**Discount & Voucher:**
+- `vouchers` - Voucher/promo codes
+- `voucher_usages` - Tracking penggunaan voucher
+
+**Reviews:**
+- `reviews` - Review dan rating produk
+
+**Chat:**
+- `conversations` - Percakapan customer-admin
+- `messages` - Pesan dalam percakapan
+
+**System:**
+- `activity_logs` - Activity logging
+- `cache`, `jobs`, `sessions` - Laravel system tables
+
+### Testing Checklist
+
+- [ ] Database berhasil dibuat dan terkoneksi (MySQL atau SQLite)
+- [ ] Semua migrations berhasil dijalankan
+- [ ] Data sample ter-seed dengan benar
+- [ ] Login sebagai admin dan customer berhasil
+- [ ] Fitur discount produk berfungsi
+- [ ] Sistem voucher dapat dibuat dan digunakan
+- [ ] Promo widget muncul saat ada produk discount
+- [ ] Checkout dengan voucher berhasil
+- [ ] Receipt menampilkan discount dengan benar
+- [ ] Semua CRUD operations berfungsi
+- [ ] Database dapat diakses (HeidiSQL untuk MySQL, atau SQLite browser untuk SQLite)
 
 ## 📞 Support
 
@@ -637,6 +934,101 @@ Jika Anda menemukan masalah yang tidak tercakup di bagian troubleshooting:
 2. Verifikasi semua prasyarat sudah terinstall dengan benar
 3. Pastikan semua migrations sudah berjalan dengan sukses
 4. Periksa file permissions pada direktori `storage/` dan `bootstrap/cache/`
+5. **Untuk masalah database MySQL:** Verifikasi koneksi di HeidiSQL terlebih dahulu, atau pertimbangkan menggunakan SQLite untuk quick testing
+6. **Untuk masalah discount/voucher:** Periksa data di tabel `vouchers` dan field `discount_percentage` di tabel `products` (bisa via HeidiSQL atau SQLite browser)
+
+## 📝 Changelog - Update Terbaru
+
+### Update Hari Ini (Latest)
+
+#### ✨ Fitur Baru
+
+1. **Sistem Discount/Voucher Lengkap:**
+   - Product-level discount dengan persentase dan periode aktif
+   - Voucher system dengan tipe percentage dan fixed
+   - Validasi lengkap (minimum purchase, usage limit, expiry date)
+   - Admin CRUD untuk voucher management
+   - Voucher usage tracking
+
+2. **Floating Promo Widget:**
+   - Modal pop-up di tengah layar saat pertama login customer
+   - Menampilkan produk dengan discount aktif (maksimal 3 produk)
+   - Fancy animations dengan GPU acceleration
+   - Minimized floating button setelah modal ditutup
+   - Auto-hide jika tidak ada produk discount
+
+3. **UI/UX Improvements:**
+   - Custom alert & confirm dialogs menggantikan browser alerts
+   - Discount display dengan warna merah konsisten di semua halaman
+   - Layout standardization dengan utility classes
+   - Symmetric dan proper alignment di semua panel
+
+4. **Performance Optimizations:**
+   - Vite build optimizations (code splitting, minification)
+   - GPU-accelerated animations
+   - Optimized CSS dan JavaScript
+   - Reduced bundle size
+
+#### 🎨 Animasi Baru
+
+- **Promo Modal Animations:**
+  - Slide-up dengan backdrop blur
+  - Stagger animation untuk item produk
+  - Pulse glow untuk discount badge
+  - Smooth fade in/out transitions
+
+#### 🗄️ Database Updates
+
+**Migrations Baru:**
+- `create_vouchers_table` - Tabel untuk voucher/promo codes
+- `create_voucher_usages_table` - Tracking penggunaan voucher
+- `add_discount_to_products_table` - Discount fields untuk produk
+- `add_discount_to_orders_table` - Discount fields untuk orders
+
+**Model Baru:**
+- `Voucher` - Model untuk voucher management
+- `VoucherUsage` - Model untuk tracking penggunaan
+
+**Service Baru:**
+- `VoucherService` - Service untuk validasi dan aplikasi voucher
+
+#### 🔧 Technical Improvements
+
+- Updated `CartService` untuk menghitung discount produk
+- Updated `CheckoutController` untuk integrasi voucher
+- Updated `Order` model dengan relasi voucher
+- Updated semua views untuk menampilkan discount dengan konsisten
+- Performance optimizations di Vite config
+
+### Database Schema Updates
+
+**Tabel `products`:**
+- `discount_percentage` (decimal) - Persentase discount
+- `discount_starts_at` (timestamp) - Tanggal mulai discount
+- `discount_expires_at` (timestamp) - Tanggal berakhir discount
+
+**Tabel `orders`:**
+- `discount` (decimal) - Total discount dari voucher
+- `voucher_id` (foreign key) - Relasi ke voucher yang digunakan
+
+**Tabel `vouchers`:**
+- `code` (string, unique) - Kode voucher
+- `name` (string) - Nama voucher
+- `type` (enum: percentage/fixed) - Tipe discount
+- `value` (decimal) - Nilai discount
+- `min_purchase` (decimal) - Minimum pembelian
+- `max_discount` (decimal) - Max discount untuk percentage
+- `usage_limit` (integer) - Batas penggunaan total
+- `usage_count` (integer) - Jumlah sudah digunakan
+- `user_limit` (integer) - Batas per user
+- `starts_at`, `expires_at` (timestamp) - Periode aktif
+- `is_active` (boolean) - Status aktif
+
+**Tabel `voucher_usages`:**
+- `voucher_id` (foreign key)
+- `user_id` (foreign key)
+- `order_id` (foreign key, nullable)
+- `discount_amount` (decimal) - Jumlah discount yang diterapkan
 
 ## 📄 License
 
