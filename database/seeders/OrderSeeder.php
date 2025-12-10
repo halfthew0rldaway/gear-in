@@ -22,9 +22,22 @@ class OrderSeeder extends Seeder
         $products = Product::all();
         $customers = User::where('role', User::ROLE_CUSTOMER)->get();
 
-        if ($products->isEmpty() || $customers->isEmpty()) {
-            $this->command->warn('No products or customers found. Please run ProductSeeder and create customers first.');
+        if ($products->isEmpty()) {
+            $this->command->warn('⚠️  No products found. Skipping OrderSeeder. Please run ProductSeeder first.');
             return;
+        }
+
+        if ($customers->isEmpty()) {
+            $this->command->warn('⚠️  No customers found. Creating default customer for orders...');
+            User::firstOrCreate(
+                ['email' => 'customer@gear-in.dev'],
+                [
+                    'name' => 'Gear-In Customer',
+                    'role' => User::ROLE_CUSTOMER,
+                    'password' => bcrypt('password'),
+                ]
+            );
+            $customers = User::where('role', User::ROLE_CUSTOMER)->get();
         }
 
         // Create some additional dummy customers if needed

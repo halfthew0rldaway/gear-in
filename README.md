@@ -218,6 +218,20 @@ INFO  Running migrations.
   ...
 
 
+**💡 Tips untuk Fresh Install (Device Baru):**
+
+Jika Anda melakukan setup di device baru atau mengalami masalah migration, gunakan perintah berikut untuk memastikan database bersih:
+
+    php artisan migrate:fresh
+
+Perintah ini akan:
+- Menghapus semua tabel yang ada
+- Membuat ulang semua tabel dari awal
+- Menjalankan semua migrations dengan urutan yang benar
+
+**⚠️ Peringatan:** Perintah `migrate:fresh` akan **menghapus semua data** yang ada di database!
+
+
 ### Langkah 3: Seeding Database
 
 Jalankan perintah berikut untuk mengisi database dengan data sample:
@@ -229,8 +243,39 @@ Output yang diharapkan:
 
 INFO  Seeding database.
 
+Creating default users...
+✅ Admin user created: admin@gear-in.dev
+✅ Admin 2 user created: admin2@gear-in.dev
+✅ Customer user created: customer@gear-in.dev
+Running seeders...
   Database\Seeders\CategorySeeder ................................. DONE
   Database\Seeders\ProductSeeder .................................. DONE
+✅ All seeders completed successfully!
+
+
+**💡 Tips untuk Fresh Install (Device Baru):**
+
+Jika Anda ingin melakukan migration dan seeding sekaligus di device baru:
+
+    php artisan migrate:fresh --seed
+
+Perintah ini akan:
+- Menghapus semua tabel yang ada
+- Membuat ulang semua tabel
+- Menjalankan semua migrations
+- Menjalankan semua seeders secara otomatis
+- Membuat user default (admin dan customer)
+- Membuat kategori, produk, orders, dan reviews sample
+
+
+**💡 Alternatif: Jika ada error saat seeding**
+
+Jika terjadi error saat seeding, Anda bisa menjalankan seeders satu per satu:
+
+    php artisan db:seed --class=CategorySeeder
+    php artisan db:seed --class=ProductSeeder
+    php artisan db:seed --class=OrderSeeder
+    php artisan db:seed --class=ReviewSeeder
 
 
 **Data yang akan di-seed:**
@@ -653,14 +698,63 @@ shakeElement(document.getElementById('field'));
 4. Test koneksi di HeidiSQL terlebih dahulu sebelum menjalankan migrations
 5. **Alternatif:** Jika masalah persist, gunakan SQLite untuk quick testing
 
-### Masalah: "Migration error" atau "Table already exists"
+### Masalah: "Migration error" atau "Table already exists" atau "Column already exists"
+
+**Penyebab:** Biasanya terjadi karena:
+- Migration sudah pernah dijalankan sebelumnya
+- Ada konflik kolom yang sudah ada
+- Database tidak dalam keadaan fresh
 
 **Solusi:**
 
-    php artisan migrate:fresh --seed
+**Opsi 1: Fresh Migration (Recommended untuk Fresh Install)**
+```bash
+php artisan migrate:fresh --seed
+```
+Perintah ini akan menghapus semua tabel dan membuat ulang dari awal, lalu menjalankan seeders.
 
+**⚠️ Peringatan:** Perintah ini akan **menghapus semua data** yang ada di database!
 
-**Peringatan:** Perintah ini akan menghapus semua data dan membuat ulang database!
+**Opsi 2: Reset Migration (Jika ingin reset tapi tidak ingin re-seed)**
+```bash
+php artisan migrate:reset
+php artisan migrate
+```
+
+**Opsi 3: Rollback dan Migrate Ulang**
+```bash
+php artisan migrate:rollback --step=10
+php artisan migrate
+```
+
+**Opsi 4: Untuk Device Baru/Testing**
+Jika Anda di device baru atau sedang testing, gunakan:
+```bash
+php artisan migrate:fresh --seed
+```
+Ini adalah cara paling aman untuk memastikan semua migrations berjalan dengan benar.
+
+### Masalah: "SQLSTATE[42S21]: Column already exists" - Khusus untuk Role Column
+
+**Penyebab:** Ada duplikasi kolom `role` di tabel `users`.
+
+**Solusi:**
+Masalah ini sudah diperbaiki dengan menghapus migration duplicate. Jika masih terjadi error, jalankan:
+```bash
+php artisan migrate:fresh --seed
+```
+
+### Masalah: "SQLSTATE[HY000]: General error" atau "Migration failed"
+
+**Solusi:**
+1. Pastikan database connection di `.env` sudah benar
+2. Pastikan database sudah dibuat (untuk MySQL)
+3. Pastikan file database ada (untuk SQLite): `database/database.sqlite`
+4. Coba jalankan fresh migration:
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+5. Jika masih error, cek log: `storage/logs/laravel.log`
 
 ### Masalah: "Assets not loading" atau "404 on CSS/JS files"
 
@@ -710,10 +804,37 @@ Gunakan port yang berbeda:
 
 ### Masalah: Tidak bisa login dengan akun default
 
-**Solusi:**
-Re-seed database:
+**Penyebab:** User default belum dibuat atau ada masalah saat seeding.
 
-    php artisan db:seed
+**Solusi:**
+
+**Opsi 1: Re-seed database (tanpa menghapus data)**
+```bash
+php artisan db:seed
+```
+
+**Opsi 2: Fresh migrate dengan seed (jika opsi 1 tidak bekerja)**
+```bash
+php artisan migrate:fresh --seed
+```
+
+**Opsi 3: Buat user secara manual via Tinker**
+```bash
+php artisan tinker
+```
+
+Kemudian di console tinker:
+```php
+\App\Models\User::updateOrCreate(
+    ['email' => 'admin@gear-in.dev'],
+    [
+        'name' => 'Gear-In Admin',
+        'role' => 'admin',
+        'password' => bcrypt('password'),
+    ]
+);
+exit
+```
 
 
 Atau buat user baru secara manual:
@@ -767,22 +888,38 @@ Atau buat user baru secara manual:
    copy .env.example .env
    php artisan key:generate
    
+   (Linux/Mac: `cp .env.example .env`)
 
 3. **Setup database:**
    
    **Opsi A - MySQL dengan HeidiSQL (Recommended):**
    - Buat database `gearin` di HeidiSQL
    - Update `.env` dengan kredensial MySQL
+   - **Jalankan migrations dan seeding (fresh):**
+     ```bash
+     php artisan migrate:fresh --seed
+     ```
    
-   **Opsi B - SQLite (Simple):**
+   **Opsi B - SQLite (Simple & Recommended untuk Testing):**
    
+   **Windows:**
+   ```bash
    type nul > database\database.sqlite
+   ```
    
-   **Jalankan migrations dan seeding:**
+   **Linux/Mac:**
+   ```bash
+   touch database/database.sqlite
+   ```
    
-   php artisan migrate
-   php artisan db:seed
+   Atau file akan dibuat otomatis saat migrate.
    
+   **Jalankan migrations dan seeding (fresh - Recommended untuk device baru):**
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+   
+   **💡 Catatan:** Untuk device baru atau testing, sangat disarankan menggunakan `migrate:fresh --seed` untuk memastikan semua migrations berjalan dengan benar tanpa konflik.
 
 4. **Build assets:**
    
@@ -938,6 +1075,47 @@ Jika Anda menemukan masalah yang tidak tercakup di bagian troubleshooting:
 6. **Untuk masalah discount/voucher:** Periksa data di tabel `vouchers` dan field `discount_percentage` di tabel `products` (bisa via HeidiSQL atau SQLite browser)
 
 ## 📝 Changelog - Update Terbaru
+
+### Update Terbaru - Fix Migration & Seeding Issues
+
+#### 🔧 Perbaikan Migration dan Seeding
+
+1. **Fix Duplicate Role Column Migration:**
+   - ❌ Dihapus migration duplicate `2025_12_07_024200_add_role_to_users_table.php`
+   - ✅ Kolom `role` sudah ada di migration awal `create_users_table.php`
+   - Masalah ini menyebabkan error "Column already exists" saat migrate di device baru
+
+2. **Improve Seeder Robustness:**
+   - ✅ DatabaseSeeder sekarang membuat users **SEBELUM** menjalankan seeders lain
+   - ✅ OrderSeeder dan ReviewSeeder sekarang memiliki error handling yang lebih baik
+   - ✅ Seeders memberikan feedback yang jelas saat berjalan
+   - ✅ Seeders dapat handle kasus data belum ada dengan lebih baik
+
+3. **Device-Friendly Migration:**
+   - ✅ Semua migrations sekarang dapat berjalan di fresh install tanpa kendala
+   - ✅ Tidak ada lagi konflik kolom atau dependency issues
+   - ✅ Recommended menggunakan `php artisan migrate:fresh --seed` untuk device baru
+
+4. **Update Documentation:**
+   - ✅ README diperbarui dengan instruksi migration yang lebih jelas
+   - ✅ Troubleshooting section diperluas dengan solusi untuk masalah umum
+   - ✅ Instruksi khusus untuk fresh install di device baru
+   - ✅ Tips dan alternatif solusi untuk berbagai skenario
+
+#### 📋 Rekomendasi untuk Fresh Install
+
+Untuk device baru atau testing, gunakan perintah berikut:
+```bash
+php artisan migrate:fresh --seed
+```
+
+Ini akan:
+- ✅ Menghapus semua tabel yang ada
+- ✅ Membuat ulang semua tabel dengan urutan yang benar
+- ✅ Menjalankan semua migrations tanpa konflik
+- ✅ Menjalankan semua seeders dengan urutan yang benar
+- ✅ Membuat user default (admin dan customer)
+- ✅ Membuat data sample (categories, products, orders, reviews)
 
 ### Update Hari Ini (Latest)
 

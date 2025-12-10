@@ -17,11 +17,17 @@ class ReviewSeeder extends Seeder
         // Get all products
         $products = Product::all();
         
+        if ($products->isEmpty()) {
+            $this->command->warn('⚠️  No products found. Skipping ReviewSeeder. Please run ProductSeeder first.');
+            return;
+        }
+        
         // Get customer users (or create dummy customers)
         $customers = User::where('role', User::ROLE_CUSTOMER)->get();
         
         // If no customers, create some dummy customers for reviews
         if ($customers->isEmpty()) {
+            $this->command->info('Creating dummy customers for reviews...');
             $customers = collect([
                 User::create([
                     'name' => 'Budi Santoso',

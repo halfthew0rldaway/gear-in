@@ -77,16 +77,19 @@ else
 fi
 echo ""
 
-# Step 5: Run migrations
-echo "🗄️  Running database migrations..."
-php artisan migrate --force
-echo "✅ Migrations completed"
-echo ""
-
-# Step 6: Seed database
-echo "🌱 Seeding database..."
-php artisan db:seed --force
-echo "✅ Database seeded"
+# Step 5: Run migrations and seed
+echo "🗄️  Running database migrations and seeding..."
+# For fresh installs, use migrate:fresh --seed to avoid any conflicts
+# For existing databases, use migrate and db:seed separately
+if [ ! -f database/database.sqlite ] || [ ! -s database/database.sqlite ]; then
+    echo "💡 Fresh database detected, using migrate:fresh --seed..."
+    php artisan migrate:fresh --seed --force
+else
+    echo "💡 Existing database detected, running migrations and seed separately..."
+    php artisan migrate --force
+    php artisan db:seed --force
+fi
+echo "✅ Migrations and seeding completed"
 echo ""
 
 # Step 7: Build assets

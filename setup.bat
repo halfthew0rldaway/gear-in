@@ -93,26 +93,34 @@ if not exist database\database.sqlite (
 )
 echo.
 
-REM Step 5: Run migrations
-echo [5/7] Running database migrations...
-call php artisan migrate --force
-if %ERRORLEVEL% NEQ 0 (
-    echo [ERROR] Failed to run migrations
-    pause
-    exit /b 1
+REM Step 5: Run migrations and seed
+echo [5/7] Running database migrations and seeding...
+REM For fresh installs, use migrate:fresh --seed to avoid any conflicts
+REM For existing databases, use migrate and db:seed separately
+if not exist database\database.sqlite (
+    echo [INFO] Fresh database detected, using migrate:fresh --seed...
+    call php artisan migrate:fresh --seed --force
+    if %ERRORLEVEL% NEQ 0 (
+        echo [ERROR] Failed to run migrations and seed
+        pause
+        exit /b 1
+    )
+) else (
+    echo [INFO] Existing database detected, running migrations and seed separately...
+    call php artisan migrate --force
+    if %ERRORLEVEL% NEQ 0 (
+        echo [ERROR] Failed to run migrations
+        pause
+        exit /b 1
+    )
+    call php artisan db:seed --force
+    if %ERRORLEVEL% NEQ 0 (
+        echo [ERROR] Failed to seed database
+        pause
+        exit /b 1
+    )
 )
-echo [OK] Migrations completed
-echo.
-
-REM Step 6: Seed database
-echo [6/7] Seeding database...
-call php artisan db:seed --force
-if %ERRORLEVEL% NEQ 0 (
-    echo [ERROR] Failed to seed database
-    pause
-    exit /b 1
-)
-echo [OK] Database seeded
+echo [OK] Migrations and seeding completed
 echo.
 
 REM Step 7: Build assets
