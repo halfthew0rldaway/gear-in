@@ -75,3 +75,252 @@ Presentasi web interaktif untuk project gear-in E-Commerce Platform.
 
 **Note:** Presentasi ini standalone dan tidak memerlukan server. Bisa langsung dibuka dari file system.
 
+
+
+update readme based on our docs
+
+My Kopkara adalah aplikasi mobile untuk digitalisasi layanan koperasi simpan pinjam.
+Aplikasi dirancang berbasis Design Thinking, dengan fokus pada transparansi informasi, efisiensi operasional, dan pengalaman pengguna yang sederhana namun efektif.
+
+🎯 Tujuan Utama
+
+Aplikasi ini dikembangkan untuk memecahkan masalah koperasi yang masih menggunakan sistem manual, seperti pencatatan buku besar, Excel lokal, dan penyampaian informasi melalui chat.
+
+Tujuan digitalisasi meliputi:
+
+Memudahkan pengurus dalam input data anggota, saldo awal, dan transaksi
+
+Memberikan akses self-service bagi anggota untuk melihat saldo dan riwayat
+
+Meningkatkan transparansi informasi keuangan
+
+Mengurangi human error pada pencatatan
+
+Mempercepat alur pengajuan pinjaman dan setoran
+
+👥 Peran Pengguna (User Roles)
+1. Anggota Koperasi
+
+Melihat total simpanan
+
+Melihat status pinjaman
+
+Melihat riwayat transaksi
+
+Mengajukan pinjaman
+
+Menambah setoran
+
+2. Pengurus/Admin Koperasi
+
+Input dan manajemen data anggota
+
+Melihat daftar transaksi setoran
+
+Melihat daftar pengajuan pinjaman
+
+Menyetujui/menolak setoran
+
+Menyetujui/menolak pinjaman
+
+Mengelola data produk koperasi
+
+Membuat laporan sederhana
+
+🧠 Metode Perancangan
+
+Perancangan UI/UX mengacu pada Design Thinking:
+
+Empathize
+Wawancara pengguna (anggota & pengurus), observasi proses manual, identifikasi pain point.
+
+Define
+Penyusunan pain point, user persona, dan How-Might-We statement.
+
+Ideate
+Brainstorming ide solusi, affinity diagram, prioritas fitur, user flow.
+
+Prototype
+Wireframe low-fidelity → UI high-fidelity → clickable prototype.
+
+Test
+Evaluasi usability menggunakan System Usability Scale (SUS).
+
+📦 Fitur Utama Aplikasi
+🏠 1. Dashboard Anggota
+
+Menampilkan ringkasan keuangan anggota:
+
+Total simpanan
+
+Total pinjaman
+
+Transaksi terbaru
+
+💰 2. Setoran Anggota
+
+Riwayat setoran
+
+Form tambah setoran baru
+
+Detail transaksi
+
+🏦 3. Pinjaman Anggota
+
+Daftar pinjaman berjalan
+
+Form pengajuan pinjaman
+
+Detail pinjaman
+
+👨‍💼 4. Dashboard Pengurus
+
+Ringkasan operasional koperasi:
+
+Jumlah anggota
+
+Setoran tertunda
+
+Penarikan tertunda
+
+Pinjaman menunggu persetujuan
+
+📇 5. Manajemen Anggota (Admin)
+
+Daftar anggota koperasi
+
+Tambah anggota baru
+
+Edit data anggota
+
+💵 6. Persetujuan Setoran (Admin)
+
+Tabel setoran anggota
+
+Filter berdasarkan status/tanggal
+
+Approve/Reject setoran
+
+📄 7. Persetujuan Pinjaman (Admin)
+
+Daftar pengajuan pinjaman
+
+Detail pinjaman
+
+Approve/Reject pinjaman
+
+📊 8. Laporan Sederhana
+
+Total simpanan
+
+Total pinjaman
+
+Grafik perkembangan bulanan (opsional)
+
+🔁 Alur Pengguna (User Flow)
+Anggota
+Login → Dashboard → Transaksi Terakhir → Detail Transaksi
+
+Login → Simpanan → Tambah Setoran → Submit
+
+Login → Pinjaman → Ajukan Pinjaman → Submit
+
+Pengurus
+Login → Dashboard Admin → Manajemen Anggota → Tambah Anggota
+
+Login → Dashboard Admin → Pengajuan Setoran → Approve/Reject
+
+Login → Dashboard Admin → Pengajuan Pinjaman → Approve/Reject
+
+🛠️ Teknologi yang Disarankan
+Frontend
+
+Mobile-First UI
+
+React Native / Flutter
+atau
+
+Figma Prototype (untuk demonstrasi)
+
+Backend
+
+(optional jika diimplementasikan nyata)
+
+Node.js / Laravel
+
+MySQL / Firestore
+
+🎨 UI/UX Guideline (Ringkas)
+
+Grid system 8px
+
+Primary color: biru kepercayaan
+
+Secondary: netral lembut
+
+Accent: gold untuk angka uang
+
+Font: Poppins
+
+Icon: outline style
+
+Minimalist look
+
+Tidak over-decorated
+
+Inspired by m-banking flow (simple, direct)
+
+📌 Pain Point (Hasil Riset)
+Pengurus
+
+Pencatatan manual rawan error
+
+File Excel tidak aman
+
+Harus mencari kembali data audit
+
+Respon lambat kepada anggota
+
+Anggota
+
+Tidak bisa cek saldo sendiri
+
+Informasi lambat & tidak real-time
+
+Harus tanya via WhatsApp
+
+Proses pinjaman masih kertas
+
+🎯 Value Proposition
+
+Self-service transparan: saldo & transaksi real-time
+
+Digital workflow: hilangkan kertas & Excel manual
+
+Pengurus lebih efisien: data terpusat
+
+Kepercayaan meningkat: riwayat jelas & transparan
+
+📜 Status Penelitian
+
+Tahapan Design Thinking selesai
+
+Wireframe selesai
+
+UI selesai
+
+Clickable prototype selesai
+
+Pengujian SUS → planned
+
+🧪 Pengujian Usability (SUS)
+
+Pengujian dilakukan untuk:
+
+menilai efektivitas navigasi
+
+kemudahan penggunaan
+
+kenyamanan visual
+
+Hasil SUS memvalidasi kelayakan desain UI sebelum implementasi.
