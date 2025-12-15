@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/enhancements.css">
 </head>
 
 <body>
@@ -30,46 +29,11 @@
             <div class="slide-content">
                 <div class="title-animation">
                     <h1 class="main-title">
-                        <span class="title-word">
-                            <span class="char" style="--char-index: 0">g</span>
-                            <span class="char" style="--char-index: 1">e</span>
-                            <span class="char" style="--char-index: 2">a</span>
-                            <span class="char" style="--char-index: 3">r</span>
-                        </span>
+                        <span class="title-word" data-delay="0">gear</span>
                         <span class="title-dash">-</span>
-                        <span class="title-word">
-                            <span class="char" style="--char-index: 4">i</span>
-                            <span class="char" style="--char-index: 5">n</span>
-                        </span>
+                        <span class="title-word" data-delay="0.2">in</span>
                     </h1>
-                    <p class="subtitle">
-                        <span class="subtitle-char" style="--char-index: 0">P</span>
-                        <span class="subtitle-char" style="--char-index: 1">l</span>
-                        <span class="subtitle-char" style="--char-index: 2">a</span>
-                        <span class="subtitle-char" style="--char-index: 3">t</span>
-                        <span class="subtitle-char" style="--char-index: 4">f</span>
-                        <span class="subtitle-char" style="--char-index: 5">o</span>
-                        <span class="subtitle-char" style="--char-index: 6">r</span>
-                        <span class="subtitle-char" style="--char-index: 7">m</span>
-                        <span class="subtitle-char" style="--char-index: 8"> </span>
-                        <span class="subtitle-char" style="--char-index: 9">E</span>
-                        <span class="subtitle-char" style="--char-index: 10">-</span>
-                        <span class="subtitle-char" style="--char-index: 11">C</span>
-                        <span class="subtitle-char" style="--char-index: 12">o</span>
-                        <span class="subtitle-char" style="--char-index: 13">m</span>
-                        <span class="subtitle-char" style="--char-index: 14">m</span>
-                        <span class="subtitle-char" style="--char-index: 15">e</span>
-                        <span class="subtitle-char" style="--char-index: 16">r</span>
-                        <span class="subtitle-char" style="--char-index: 17">c</span>
-                        <span class="subtitle-char" style="--char-index: 18">e</span>
-                        <span class="subtitle-char" style="--char-index: 19"> </span>
-                        <span class="subtitle-char" style="--char-index: 20">M</span>
-                        <span class="subtitle-char" style="--char-index: 21">o</span>
-                        <span class="subtitle-char" style="--char-index: 22">d</span>
-                        <span class="subtitle-char" style="--char-index: 23">e</span>
-                        <span class="subtitle-char" style="--char-index: 24">r</span>
-                        <span class="subtitle-char" style="--char-index: 25">n</span>
-                    </p>
+                    <p class="subtitle" data-delay="0.4">Platform E-Commerce Modern</p>
                     <p class="tagline" data-delay="0.6">Tugas Besar · Pemrograman Web Lanjut</p>
                 </div>
                 <div class="floating-elements">
