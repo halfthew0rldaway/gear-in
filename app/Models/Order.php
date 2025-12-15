@@ -37,6 +37,7 @@ class Order extends Model
         'postal_code',
         'notes',
         'placed_at',
+        'handled_by',
     ];
 
     protected $casts = [
@@ -55,13 +56,13 @@ class Order extends Model
     protected static function booted(): void
     {
         static::creating(function (Order $order) {
-            if (! $order->code) {
+            if (!$order->code) {
                 $order->code = 'ORD-' . strtoupper(Str::random(8));
             }
-            if (! $order->status) {
+            if (!$order->status) {
                 $order->status = self::STATUS_PENDING;
             }
-            if (! $order->payment_status) {
+            if (!$order->payment_status) {
                 $order->payment_status = 'unpaid';
             }
         });
@@ -93,5 +94,10 @@ class Order extends Model
     public function statusHistories()
     {
         return $this->hasMany(OrderStatusHistory::class)->orderBy('created_at');
+    }
+
+    public function handledBy()
+    {
+        return $this->belongsTo(User::class, 'handled_by');
     }
 }

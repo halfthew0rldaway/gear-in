@@ -23,6 +23,7 @@
                     <th class="px-6 py-4">Nama</th>
                     <th class="px-6 py-4">Tipe</th>
                     <th class="px-6 py-4">Nilai</th>
+                    <th class="px-6 py-4">Total Diskon</th>
                     <th class="px-6 py-4">Digunakan</th>
                     <th class="px-6 py-4">Status</th>
                     <th class="px-6 py-4 text-right">Aksi</th>
@@ -54,6 +55,12 @@
                             @else
                                 <span class="font-semibold">Rp {{ number_format($voucher->value, 0, ',', '.') }}</span>
                             @endif
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="font-semibold text-gray-900">
+                                Rp {{ number_format($voucher->usages_sum_discount_amount ?? 0, 0, ',', '.') }}
+                            </p>
+                            <p class="text-xs text-gray-500">Total Potongan</p>
                         </td>
                         <td class="px-6 py-4">
                             <span class="text-sm">

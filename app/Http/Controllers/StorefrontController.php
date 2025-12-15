@@ -83,7 +83,7 @@ class StorefrontController extends Controller
         }
 
         $selectedCategory = null;
-        
+
         if ($categorySlug = $request->input('category')) {
             $selectedCategory = $categories->firstWhere('slug', $categorySlug);
             if ($selectedCategory) {
@@ -101,6 +101,10 @@ class StorefrontController extends Controller
 
         if ($request->boolean('in_stock')) {
             $productsQuery->where('stock', '>', 0);
+        }
+
+        if ($request->boolean('out_of_stock')) {
+            $productsQuery->where('stock', 0);
         }
 
         if ($request->boolean('featured')) {
@@ -151,6 +155,7 @@ class StorefrontController extends Controller
                 'min_price' => $request->input('min_price'),
                 'max_price' => $request->input('max_price'),
                 'in_stock' => $request->boolean('in_stock'),
+                'out_of_stock' => $request->boolean('out_of_stock'),
                 'featured' => $request->boolean('featured'),
             ],
         ]);
@@ -167,15 +172,15 @@ class StorefrontController extends Controller
         $products = Product::active()
             ->with('images', 'category')
             ->where(function ($query) use ($searchTerm) {
-                $query->where('name', 'like', '%'.$searchTerm.'%')
-                    ->orWhere('summary', 'like', '%'.$searchTerm.'%')
-                    ->orWhere('description', 'like', '%'.$searchTerm.'%');
+                $query->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('summary', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('description', 'like', '%' . $searchTerm . '%');
             })
             ->orderBy('name')
             ->take(8)
             ->get(['id', 'name', 'slug', 'price', 'category_id']);
 
-        return response()->json($products->map(fn ($product) => [
+        return response()->json($products->map(fn($product) => [
             'name' => $product->name,
             'slug' => $product->slug,
             'price' => $product->formatted_price,

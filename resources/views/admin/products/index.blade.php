@@ -15,6 +15,15 @@
             <a href="{{ route('admin.products.create') }}" class="text-xs uppercase tracking-[0.4em] border border-gray-900 px-4 py-2 rounded-full hover:bg-gray-900 hover:text-white transition btn-ripple focus-ring">Tambah Produk</a>
         </div>
     </div>
+    <div class="flex gap-6 mb-6 border-b border-gray-200">
+        <a href="{{ route('admin.products.index') }}" class="pb-2 text-sm font-medium border-b-2 transition {{ !request('trashed') ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-900' }}">
+            Aktif
+        </a>
+        <a href="{{ route('admin.products.index', ['trashed' => true]) }}" class="pb-2 text-sm font-medium border-b-2 transition {{ request('trashed') ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-900' }}">
+            Sampah
+        </a>
+    </div>
+
     <div class="bg-white border border-gray-200 rounded-[32px] overflow-hidden">
         <table class="w-full text-sm">
             <thead>
@@ -81,12 +90,24 @@
                         <td class="px-6 py-4">{{ $product->formatted_price }}</td>
                         <td class="px-6 py-4">{{ $product->stock }}</td>
                         <td class="px-6 py-4 text-right">
-                            <a href="{{ route('admin.products.edit', $product) }}" class="text-xs uppercase tracking-[0.4em] text-gray-500 hover:text-gray-900 link-underline focus-ring">Edit</a>
-                            <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="inline-block ml-4">
-                                @csrf
-                                @method('DELETE')
-                                <button class="text-xs uppercase tracking-[0.4em] text-red-500 hover:text-red-600 focus-ring">Hapus</button>
-                            </form>
+                            @if(request('trashed'))
+                                <form action="{{ route('admin.products.restore', $product->id) }}" method="POST" class="inline-block">
+                                    @csrf
+                                    <button class="text-xs uppercase tracking-[0.4em] text-blue-600 hover:text-blue-700 focus-ring">Pulihkan</button>
+                                </form>
+                                <form action="{{ route('admin.products.force-delete', $product->id) }}" method="POST" class="inline-block ml-4" onsubmit="return confirm('Apakah Anda yakin ingin menghapus permanen produk ini? Tindakan ini tidak dapat dibatalkan.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="text-xs uppercase tracking-[0.4em] text-red-600 hover:text-red-700 focus-ring">Hapus Permanen</button>
+                                </form>
+                            @else
+                                <a href="{{ route('admin.products.edit', $product) }}" class="text-xs uppercase tracking-[0.4em] text-gray-500 hover:text-gray-900 link-underline focus-ring">Edit</a>
+                                <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="inline-block ml-4">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="text-xs uppercase tracking-[0.4em] text-red-500 hover:text-red-600 focus-ring">Hapus</button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @empty

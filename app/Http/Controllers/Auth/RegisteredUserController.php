@@ -31,7 +31,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -44,11 +44,10 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
-        
-        // Reset promo widget state on registration
-        $request->session()->forget(['promo_widget_closed', 'promo_widget_minimized']);
+        event(new Registered($user));
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Auth::login($user); // Disable auto-login
+
+        return redirect()->route('login')->with('status', 'Akun berhasil dibuat! Silakan masuk.');
     }
 }

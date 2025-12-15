@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'category_id',
@@ -41,10 +42,10 @@ class Product extends Model
     protected static function booted(): void
     {
         static::creating(function (Product $product) {
-            if (! $product->slug) {
+            if (!$product->slug) {
                 $product->slug = Str::slug($product->name);
             }
-            if (! $product->sku) {
+            if (!$product->sku) {
                 $product->sku = strtoupper(Str::random(8));
             }
         });
@@ -102,7 +103,7 @@ class Product extends Model
 
     public function getFormattedPriceAttribute(): string
     {
-        return 'Rp ' . number_format($this->price, 0, ',', '.');
+        return 'Rp ' . number_format((float) $this->price, 0, ',', '.');
     }
 
     /**
@@ -144,5 +145,23 @@ class Product extends Model
     public function getFormattedFinalPriceAttribute(): string
     {
         return 'Rp ' . number_format($this->final_price, 0, ',', '.');
+    }
+
+    public function stockMovements()
+    {
+        return $this->hasMany(StockMovement::class)->orderBy('created_at', 'desc');
+    }
+
+    public function adjustStock(int $quantity, string $type, ?string $referenceId = null, ?int $userId = null, ?string $note = null)
+    {
+        $this->increment('stock', $quantity);
+
+        $this->stockMovements()->create([
+            'quantity' => $quantity,
+            'type' => $type,
+            'reference_id' => $referenceId,
+            'user_id' => $userId,
+            'note' => $note,
+        ]);
     }
 }

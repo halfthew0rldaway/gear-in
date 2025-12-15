@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         // Create default users FIRST before other seeders that might need them
         $this->command->info('Creating default users...');
-        
+
         try {
             User::updateOrCreate(
                 ['email' => 'admin@gear-in.dev'],
@@ -55,15 +55,17 @@ class DatabaseSeeder extends Seeder
 
         // Run other seeders in order
         $this->command->info('Running seeders...');
-        
+
         try {
             $this->call([
                 CategorySeeder::class,
                 ProductSeeder::class,
                 OrderSeeder::class,
                 ReviewSeeder::class,
+                VoucherSeeder::class,
+                SoldOutProductSeeder::class,
             ]);
-            
+
             $this->command->info('✅ All seeders completed successfully!');
         } catch (\Exception $e) {
             $this->command->error('Error running seeders: ' . $e->getMessage());

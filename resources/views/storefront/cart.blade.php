@@ -41,6 +41,22 @@
                                         <p class="text-sm text-gray-600 font-medium mt-1">{{ $item->variant->name }}</p>
                                     @endif
                                     <p class="text-xs sm:text-sm text-gray-500 mt-1 line-clamp-2">{{ $item->product->summary }}</p>
+                                    
+                                    @php
+                                        $stock = $item->variant ? $item->variant->stock : $item->product->stock;
+                                    @endphp
+                                    
+                                    @if($stock == 0)
+                                        <div class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-red-50 text-red-700 text-[10px] font-bold uppercase tracking-wider">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>
+                                            Stok Habis
+                                        </div>
+                                    @elseif($item->quantity > $stock)
+                                        <div class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-50 text-amber-700 text-[10px] font-bold uppercase tracking-wider">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
+                                            Sisa Stok: {{ $stock }}
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

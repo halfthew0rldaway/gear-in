@@ -13,12 +13,12 @@ class VoucherController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Voucher::withCount('usages');
+        $query = Voucher::withCount('usages')->withSum('usages', 'discount_amount');
 
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('code', 'like', "%{$search}%")
-                  ->orWhere('name', 'like', "%{$search}%");
+                    ->orWhere('name', 'like', "%{$search}%");
             });
         }
 

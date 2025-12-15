@@ -8,7 +8,12 @@
         @apply bg-gray-50 text-gray-900;
     }
 
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
         @apply text-gray-900;
     }
 
@@ -95,13 +100,11 @@
         content: '';
         position: absolute;
         inset: 0;
-        background: repeating-linear-gradient(
-            to bottom,
-            rgba(255, 255, 255, 0.06),
-            rgba(255, 255, 255, 0.06) 1px,
-            transparent 1px,
-            transparent 18px
-        );
+        background: repeating-linear-gradient(to bottom,
+                rgba(255, 255, 255, 0.06),
+                rgba(255, 255, 255, 0.06) 1px,
+                transparent 1px,
+                transparent 18px);
         mix-blend-mode: soft-light;
         animation: matrix-fall 12s linear infinite;
     }
@@ -116,6 +119,7 @@
         0% {
             transform: translate3d(0, 0, 0);
         }
+
         100% {
             transform: translate3d(-40px, -40px, 0);
         }
@@ -125,6 +129,7 @@
         0% {
             transform: translateY(-40px);
         }
+
         100% {
             transform: translateY(40px);
         }
@@ -134,6 +139,7 @@
         0% {
             transform: translate3d(-4%, -2%, 0) scale(1);
         }
+
         100% {
             transform: translate3d(4%, 3%, 0) scale(1.08);
         }
@@ -143,42 +149,68 @@
     html {
         scroll-behavior: smooth;
     }
-    
+
     /* Product card animations */
     .product-card {
         animation: fadeInUp 0.4s ease-out backwards;
     }
-    
-    .product-card:nth-child(1) { animation-delay: 0.05s; }
-    .product-card:nth-child(2) { animation-delay: 0.1s; }
-    .product-card:nth-child(3) { animation-delay: 0.15s; }
-    .product-card:nth-child(4) { animation-delay: 0.2s; }
-    .product-card:nth-child(5) { animation-delay: 0.25s; }
-    .product-card:nth-child(6) { animation-delay: 0.3s; }
-    .product-card:nth-child(7) { animation-delay: 0.35s; }
-    .product-card:nth-child(8) { animation-delay: 0.4s; }
-    .product-card:nth-child(9) { animation-delay: 0.45s; }
-    
+
+    .product-card:nth-child(1) {
+        animation-delay: 0.05s;
+    }
+
+    .product-card:nth-child(2) {
+        animation-delay: 0.1s;
+    }
+
+    .product-card:nth-child(3) {
+        animation-delay: 0.15s;
+    }
+
+    .product-card:nth-child(4) {
+        animation-delay: 0.2s;
+    }
+
+    .product-card:nth-child(5) {
+        animation-delay: 0.25s;
+    }
+
+    .product-card:nth-child(6) {
+        animation-delay: 0.3s;
+    }
+
+    .product-card:nth-child(7) {
+        animation-delay: 0.35s;
+    }
+
+    .product-card:nth-child(8) {
+        animation-delay: 0.4s;
+    }
+
+    .product-card:nth-child(9) {
+        animation-delay: 0.45s;
+    }
+
     /* Product card image zoom */
     .product-image-container {
         overflow: hidden;
     }
-    
+
     .product-image-container img {
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         will-change: transform;
     }
-    
+
     .group:hover .product-image-container img {
         transform: scale(1.02);
     }
-    
+
     /* Button ripple effect */
     .btn-ripple {
         position: relative;
         overflow: hidden;
     }
-    
+
     .btn-ripple::before {
         content: '';
         position: absolute;
@@ -188,31 +220,31 @@
         transition: opacity 0.3s ease;
         pointer-events: none;
     }
-    
+
     .btn-ripple:hover::before {
         opacity: 0.1;
     }
-    
+
     .btn-ripple:active::before {
         opacity: 0.2;
         transition: opacity 0.1s ease;
     }
-    
+
     /* Rating stars pulse */
     .rating-star {
         transition: transform 0.2s ease;
         display: inline-block;
     }
-    
+
     .rating-star:hover {
         transform: scale(1.1);
     }
-    
+
     /* Link underline animation */
     .link-underline {
         position: relative;
     }
-    
+
     .link-underline::after {
         content: '';
         position: absolute;
@@ -223,72 +255,73 @@
         background: currentColor;
         transition: width 0.3s ease;
     }
-    
+
     .link-underline:hover::after {
         width: 100%;
     }
-    
+
     /* Success notification slide-in */
     @keyframes slideInRight {
         from {
             opacity: 0;
             transform: translateX(100%);
         }
+
         to {
             opacity: 1;
             transform: translateX(0);
         }
     }
-    
+
     .notification-slide {
         animation: slideInRight 0.3s ease-out;
     }
-    
+
     /* Focus ring animation */
     .focus-ring {
         transition: all 0.2s ease;
     }
-    
+
     .focus-ring:focus {
         outline: none;
         ring-width: 2px;
         ring-color: rgb(17, 24, 39);
         ring-offset-width: 2px;
     }
-    
+
     /* Fade in up animation */
     @keyframes fadeInUp {
         from {
             opacity: 0;
             transform: translateY(10px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
         }
     }
-    
+
     /* Skeleton loading animation - Enhanced with shimmer */
     .skeleton {
-        background: linear-gradient(
-            90deg,
-            #f0f0f0 0%,
-            #f8f8f8 50%,
-            #f0f0f0 100%
-        );
+        background: linear-gradient(90deg,
+                #f0f0f0 0%,
+                #f8f8f8 50%,
+                #f0f0f0 100%);
         background-size: 1000px 100%;
         animation: shimmer 2s infinite;
     }
-    
+
     @keyframes shimmer {
         0% {
             background-position: -1000px 0;
         }
+
         100% {
             background-position: 1000px 0;
         }
     }
-    
+
     /* Minimalist spinner */
     .loading-spinner {
         width: 40px;
@@ -298,13 +331,13 @@
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
     }
-    
+
     @keyframes spin {
-        to { 
-            transform: rotate(360deg); 
+        to {
+            transform: rotate(360deg);
         }
     }
-    
+
     /* Dots pulse loader */
     .loading-dots {
         display: flex;
@@ -312,7 +345,7 @@
         justify-content: center;
         align-items: center;
     }
-    
+
     .loading-dots span {
         width: 8px;
         height: 8px;
@@ -320,87 +353,97 @@
         border-radius: 50%;
         animation: dot-pulse 1.4s ease-in-out infinite;
     }
-    
+
     .loading-dots span:nth-child(2) {
         animation-delay: 0.2s;
     }
-    
+
     .loading-dots span:nth-child(3) {
         animation-delay: 0.4s;
     }
-    
+
     @keyframes dot-pulse {
-        0%, 100% {
+
+        0%,
+        100% {
             opacity: 0.3;
             transform: scale(0.8);
         }
+
         50% {
             opacity: 1;
             transform: scale(1);
         }
     }
-    
+
     /* Smooth progress bar dengan gradient */
     .progress-bar-animated {
-        background: linear-gradient(
-            90deg,
-            #111827 0%,
-            #374151 50%,
-            #111827 100%
-        );
+        background: linear-gradient(90deg,
+                #111827 0%,
+                #374151 50%,
+                #111827 100%);
         background-size: 200% 100%;
         animation: progress-shimmer 2s linear infinite;
         transition: width 0.3s ease;
     }
-    
+
     @keyframes progress-shimmer {
         0% {
             background-position: 0% 0%;
         }
+
         100% {
             background-position: 200% 0%;
         }
     }
-    
+
     /* Content appear animation */
     .content-loading {
         animation: content-appear 0.4s ease-out;
     }
-    
+
     @keyframes content-appear {
         from {
             opacity: 0;
             transform: translateY(10px) scale(0.98);
         }
+
         to {
             opacity: 1;
             transform: translateY(0) scale(1);
         }
     }
-    
+
     /* Shake animation for form validation */
     @keyframes shake {
-        0%, 100% {
+
+        0%,
+        100% {
             transform: translateX(0);
         }
+
         25% {
             transform: translateX(-10px);
         }
+
         75% {
             transform: translateX(10px);
         }
     }
-    
+
     /* Bounce animation for confirm dialog */
     @keyframes bounce {
-        0%, 100% {
+
+        0%,
+        100% {
             transform: translateY(0);
         }
+
         50% {
             transform: translateY(-8px);
         }
     }
-    
+
     /* Progress bar */
     .progress-container {
         width: 100%;
@@ -409,30 +452,30 @@
         border-radius: 2px;
         overflow: hidden;
     }
-    
+
     .progress-bar {
         height: 100%;
         background: #111827;
         transition: width 0.3s ease;
         border-radius: 2px;
     }
-    
+
     /* Scroll reveal base styles */
     .scroll-reveal {
         will-change: opacity, transform;
     }
-    
+
     /* Ensure grid items have equal height */
-    .grid > .scroll-reveal,
-    .grid > div > .scroll-reveal {
+    .grid>.scroll-reveal,
+    .grid>div>.scroll-reveal {
         height: 100%;
     }
-    
+
     /* Product card height consistency */
     .product-card {
         min-height: 100%;
     }
-    
+
     /* Line clamp utilities */
     .line-clamp-2 {
         display: -webkit-box;
@@ -440,65 +483,69 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    
+
     /* Float animation for minimized widget */
     @keyframes float {
-        0%, 100% {
+
+        0%,
+        100% {
             transform: translateY(0px);
         }
+
         50% {
             transform: translateY(-10px);
         }
     }
-    
+
     .animate-float {
         animation: float 3s ease-in-out infinite;
     }
-    
+
     /* Consistent spacing utilities */
     .section-padding {
         @apply px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16;
     }
-    
+
     .container-max-width {
         @apply max-w-6xl mx-auto;
     }
-    
+
     .card-padding {
         @apply p-6 sm:p-8;
     }
-    
+
     /* Symmetric grid gaps */
     .grid-gap-sm {
         @apply gap-4 sm:gap-6;
     }
-    
+
     .grid-gap-md {
         @apply gap-6 sm:gap-8;
     }
-    
+
     /* Consistent border radius */
     .radius-card {
         @apply rounded-2xl sm:rounded-3xl;
     }
-    
+
     .radius-button {
         @apply rounded-full;
     }
-    
+
     /* Consistent shadow */
     .shadow-card {
         @apply shadow-lg shadow-gray-200/50;
     }
-    
+
     /* Performance: GPU acceleration for animations */
     .gpu-accelerate {
         transform: translateZ(0);
         will-change: transform, opacity;
     }
-    
+
     /* Respect reduced motion preference */
     @media (prefers-reduced-motion: reduce) {
+
         *,
         *::before,
         *::after {
@@ -507,10 +554,84 @@
             transition-duration: 0.01ms !important;
             scroll-behavior: auto !important;
         }
-        
+
         .skeleton,
         .animate-float {
             animation: none !important;
         }
+    }
+
+
+    /* Playful Form Entrance */
+    @keyframes formEntrance {
+        0% {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+        }
+
+        50% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .animate-form-entrance {
+        animation: formEntrance 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        /* Springy effect */
+        transform-origin: center center;
+    }
+
+    /* Staggered Child Animations */
+    .stagger-1 {
+        animation-delay: 100ms;
+    }
+
+    .stagger-2 {
+        animation-delay: 200ms;
+    }
+
+    .stagger-3 {
+        animation-delay: 300ms;
+    }
+
+    .stagger-4 {
+        animation-delay: 400ms;
+    }
+
+    .stagger-5 {
+        animation-delay: 500ms;
+    }
+
+    .reveal-child {
+        opacity: 0;
+        animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    /* Playful Input Focus */
+    .input-playful {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .input-playful:focus {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Playful Button Hover */
+    .btn-playful {
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .btn-playful:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-playful:active {
+        transform: translateY(1px) scale(0.98);
     }
 }

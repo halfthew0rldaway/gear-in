@@ -23,14 +23,18 @@ class ProductController extends Controller
     {
         $productsQuery = Product::with('category', 'images');
 
+        if ($request->has('trashed')) {
+            $productsQuery->onlyTrashed();
+        }
+
         if ($search = $request->input('q')) {
             $productsQuery->where(function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%")
-                      ->orWhere('summary', 'like', "%{$search}%")
-                      ->orWhere('sku', 'like', "%{$search}%")
-                      ->orWhereHas('category', function ($q) use ($search) {
-                          $q->where('name', 'like', "%{$search}%");
-                      });
+                    ->orWhere('summary', 'like', "%{$search}%")
+                    ->orWhere('sku', 'like', "%{$search}%")
+                    ->orWhereHas('category', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -41,8 +45,8 @@ class ProductController extends Controller
         switch ($sortBy) {
             case 'category':
                 $productsQuery->leftJoin('categories', 'products.category_id', '=', 'categories.id')
-                             ->orderBy('categories.name', $sortOrder)
-                             ->select('products.*');
+                    ->orderBy('categories.name', $sortOrder)
+                    ->select('products.*');
                 break;
             case 'price':
                 $productsQuery->orderBy('price', $sortOrder);
@@ -134,6 +138,16 @@ class ProductController extends Controller
         $images = $data['images'] ?? [];
         unset($data['images'], $data['delete_images']);
 
+        // Handle stock change logging
+        if (isset($data['stock'])) {
+            $newStock = (int) $data['stock'];
+            if ($newStock !== $product->stock) {
+                $diff = $newStock - $product->stock;
+                $product->adjustStock($diff, 'manual', null, $request->user()->id, 'Admin manual update');
+                unset($data['stock']); // Prevent double update
+            }
+        }
+
         $product->update($data);
 
         // Handle new images
@@ -150,6 +164,31 @@ class ProductController extends Controller
 
     public function destroy(Product $product, ActivityLogger $logger): RedirectResponse
     {
+        $product->delete();
+
+        $logger->log('product.deleted', $product);
+
+        return redirect()
+            ->route('admin.products.index')
+            ->with('status', 'Produk dipindahkan ke sampah.');
+    }
+
+    public function restore($id, ActivityLogger $logger): RedirectResponse
+    {
+        $product = Product::onlyTrashed()->findOrFail($id);
+        $product->restore();
+
+        $logger->log('product.restored', $product);
+
+        return redirect()
+            ->route('admin.products.index', ['trashed' => true])
+            ->with('status', 'Produk berhasil dipulihkan.');
+    }
+
+    public function forceDelete($id, ActivityLogger $logger): RedirectResponse
+    {
+        $product = Product::onlyTrashed()->findOrFail($id);
+
         // Delete all product images
         foreach ($product->images as $image) {
             if (Storage::disk('public')->exists($image->image_path)) {
@@ -158,17 +197,17 @@ class ProductController extends Controller
         }
 
         // Delete old image_path if exists
-        if ($product->image_path && ! Str::startsWith($product->image_path, ['http://', 'https://']) && Storage::disk('public')->exists($product->image_path)) {
+        if ($product->image_path && !Str::startsWith($product->image_path, ['http://', 'https://']) && Storage::disk('public')->exists($product->image_path)) {
             Storage::disk('public')->delete($product->image_path);
         }
 
-        $product->delete();
+        $product->forceDelete();
 
-        $logger->log('product.deleted', $product);
+        $logger->log('product.force_deleted', $product);
 
         return redirect()
-            ->route('admin.products.index')
-            ->with('status', 'Produk dihapus.');
+            ->route('admin.products.index', ['trashed' => true])
+            ->with('status', 'Produk dihapus permanen.');
     }
 
     /**
@@ -182,25 +221,26 @@ class ProductController extends Controller
 
         foreach ($files as $file) {
             $order++;
-            if ($order > 10) break; // Max 10 images
+            if ($order > 10)
+                break; // Max 10 images
 
             try {
                 // Read image
                 $image = $manager->read($file->getRealPath());
-                
+
                 // Resize and crop to square (800x800) maintaining aspect ratio
                 $image->cover(800, 800);
 
                 // Save to storage
                 $path = 'products/' . Str::random(40) . '.' . $file->getClientOriginalExtension();
                 $fullPath = storage_path('app/public/' . $path);
-                
+
                 // Ensure directory exists
                 $directory = dirname($fullPath);
                 if (!is_dir($directory)) {
                     mkdir($directory, 0755, true);
                 }
-                
+
                 $image->save($fullPath);
 
                 ProductImage::create([

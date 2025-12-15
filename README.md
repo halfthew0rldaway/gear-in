@@ -388,7 +388,12 @@ Setelah proses seeding selesai, Anda dapat menggunakan akun berikut untuk login:
 - ✅ **Keranjang Belanja** dengan dukungan product variants
 - ✅ **Proses Checkout** dengan multiple shipping options
 - ✅ **Manajemen Pesanan** dengan kategori (On Going, Dibatalkan, Selesai)
+- ✅ **Order History Insights** dengan ringkasan belanja, total spending, dan statistik
+- ✅ **Quick Re-order** ("Beli Lagi") dari halaman riwayat pesanan
+- ✅ **Improved Order Status UI** dengan semantic colors dan clearer typography
 - ✅ **Order Tracking** dengan tracking number
+- ✅ **Authentication UI Refresh** dengan animasi interaktif dan Indonesian localization
+- ✅ **Registration Flow Improvement** (manual login requirement for security)
 - ✅ **Pembatalan Pesanan** (untuk pesanan dengan status pending/paid)
 - ✅ **Review dan Rating Produk** (hanya untuk pesanan yang sudah complete)
 - ✅ **Review dari Halaman Detail Order**

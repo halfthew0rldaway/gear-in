@@ -20,12 +20,12 @@ class OrderController extends Controller
         if ($search = $request->input('q')) {
             $ordersQuery->where(function ($query) use ($search) {
                 $query->where('code', 'like', "%{$search}%")
-                      ->orWhere('customer_name', 'like', "%{$search}%")
-                      ->orWhere('customer_email', 'like', "%{$search}%")
-                      ->orWhereHas('user', function ($q) use ($search) {
-                          $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('customer_name', 'like', "%{$search}%")
+                    ->orWhere('customer_email', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
                             ->orWhere('email', 'like', "%{$search}%");
-                      });
+                    });
             });
         }
 
@@ -39,8 +39,8 @@ class OrderController extends Controller
                 break;
             case 'customer':
                 $ordersQuery->leftJoin('users', 'orders.user_id', '=', 'users.id')
-                           ->orderBy('users.name', $sortOrder)
-                           ->select('orders.*');
+                    ->orderBy('users.name', $sortOrder)
+                    ->select('orders.*');
                 break;
             case 'total':
                 $ordersQuery->orderBy('total', $sortOrder);
@@ -75,13 +75,16 @@ class OrderController extends Controller
     public function update(Request $request, Order $order, ActivityLogger $logger): RedirectResponse
     {
         $data = $request->validate([
-            'status' => ['required', Rule::in([
-                Order::STATUS_PENDING,
-                Order::STATUS_PAID,
-                Order::STATUS_SHIPPED,
-                Order::STATUS_COMPLETED,
-                Order::STATUS_CANCELLED,
-            ])],
+            'status' => [
+                'required',
+                Rule::in([
+                    Order::STATUS_PENDING,
+                    Order::STATUS_PAID,
+                    Order::STATUS_SHIPPED,
+                    Order::STATUS_COMPLETED,
+                    Order::STATUS_CANCELLED,
+                ])
+            ],
             'tracking_number' => ['nullable', 'string', 'max:255'],
         ]);
 
@@ -110,5 +113,22 @@ class OrderController extends Controller
         ], $request->user());
 
         return back()->with('status', 'Status pesanan diperbarui.');
+    }
+    public function assign(Request $request, Order $order): RedirectResponse
+    {
+        $action = $request->input('action');
+
+        if ($action === 'claim') {
+            $order->update(['handled_by' => $request->user()->id]);
+            $message = 'Anda telah mengambil alih pesanan ini.';
+        } elseif ($action === 'release') {
+            abort_unless($order->handled_by === $request->user()->id, 403);
+            $order->update(['handled_by' => null]);
+            $message = 'Anda telah melepaskan pesanan ini.';
+        } else {
+            return back();
+        }
+
+        return back()->with('status', $message);
     }
 }

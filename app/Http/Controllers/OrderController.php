@@ -38,7 +38,35 @@ class OrderController extends Controller
             ->latest()
             ->get();
 
-        return view('storefront.orders.index', compact('ongoingOrders', 'canceledOrders', 'completedOrders'));
+        // Insights
+        $totalSpent = $user->orders()
+            ->whereIn('status', [Order::STATUS_PAID, Order::STATUS_SHIPPED, Order::STATUS_COMPLETED])
+            ->sum('total');
+
+        $completedOrdersCount = $user->orders()
+            ->where('status', Order::STATUS_COMPLETED)
+            ->count();
+
+        $activeOrdersCount = $user->orders()
+            ->whereIn('status', [Order::STATUS_PENDING, Order::STATUS_PAID, Order::STATUS_SHIPPED])
+            ->count();
+
+        // simple "repeat order" candidate: last completed order
+        $lastOrder = $user->orders()
+            ->where('status', Order::STATUS_COMPLETED)
+            ->with('items.product')
+            ->latest()
+            ->first();
+
+        return view('storefront.orders.index', compact(
+            'ongoingOrders',
+            'canceledOrders',
+            'completedOrders',
+            'totalSpent',
+            'completedOrdersCount',
+            'activeOrdersCount',
+            'lastOrder'
+        ));
     }
 
     public function show(Request $request, Order $order): View
@@ -46,7 +74,7 @@ class OrderController extends Controller
         abort_unless($order->user_id === $request->user()->id, 403);
 
         $order->load('items.product', 'statusHistories.user', 'voucher');
-        
+
         // Load reviews for products in this order
         $productIds = $order->items->pluck('product_id')->unique();
         $reviews = \App\Models\Review::where('user_id', $request->user()->id)
@@ -61,7 +89,7 @@ class OrderController extends Controller
     public function receipt(Request $request, Order $order): View
     {
         abort_unless($order->user_id === $request->user()->id, 403);
-        
+
         $order->load('items.product', 'voucher');
 
         $order->load('items', 'statusHistories.user');
@@ -91,7 +119,13 @@ class OrderController extends Controller
         foreach ($order->items as $item) {
             $product = \App\Models\Product::find($item->product_id);
             if ($product) {
-                $product->increment('stock', $item->quantity);
+                $product->adjustStock(
+                    $item->quantity,
+                    'cancel',
+                    $order->code,
+                    $request->user()->id,
+                    'Order cancellation'
+                );
             }
         }
 

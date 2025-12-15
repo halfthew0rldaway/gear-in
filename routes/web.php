@@ -39,7 +39,7 @@ Route::middleware(['auth', 'can:access-customer'])->group(function () {
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('/orders/{order}/receipt', [OrderController::class, 'receipt'])->name('orders.receipt');
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
-    
+
     Route::get('/payment/{order}', [\App\Http\Controllers\PaymentController::class, 'show'])->name('payment.show');
     Route::post('/payment/{order}/complete', [\App\Http\Controllers\PaymentController::class, 'complete'])->name('payment.complete');
     Route::get('/payment/{order}/success', [\App\Http\Controllers\PaymentController::class, 'success'])->name('payment.success');
@@ -56,7 +56,7 @@ Route::middleware(['auth', 'can:access-customer'])->group(function () {
     Route::post('/chat/{conversation}/message', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
     Route::post('/chat/send-ajax', [\App\Http\Controllers\ChatController::class, 'sendMessageAjax'])->name('chat.send-ajax');
     Route::get('/chat/{conversation}/messages', [\App\Http\Controllers\ChatController::class, 'getMessages'])->name('chat.messages');
-    
+
     Route::post('/voucher/validate', [\App\Http\Controllers\VoucherController::class, 'validate'])->name('voucher.validate');
     Route::post('/promo-widget/close', [\App\Http\Controllers\PromoWidgetController::class, 'close'])->name('promo-widget.close');
     Route::post('/promo-widget/minimize', [\App\Http\Controllers\PromoWidgetController::class, 'minimize'])->name('promo-widget.minimize');
@@ -70,13 +70,16 @@ Route::prefix('admin')
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard/printable', [AdminDashboardController::class, 'printable'])->name('dashboard.printable');
         Route::resource('categories', AdminCategoryController::class)->except(['show']);
+        Route::post('products/{product}/restore', [AdminProductController::class, 'restore'])->name('products.restore');
+        Route::delete('products/{product}/force-delete', [AdminProductController::class, 'forceDelete'])->name('products.force-delete');
         Route::resource('products', AdminProductController::class)->except(['show']);
 
         Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::get('orders/{order}/receipt', [AdminOrderController::class, 'receipt'])->name('orders.receipt');
+        Route::patch('orders/{order}/assign', [AdminOrderController::class, 'assign'])->name('orders.assign');
         Route::patch('orders/{order}', [AdminOrderController::class, 'update'])->name('orders.update');
-        
+
         Route::get('reviews', [\App\Http\Controllers\Admin\ReviewController::class, 'index'])->name('reviews.index');
         Route::get('reviews/{review}', [\App\Http\Controllers\Admin\ReviewController::class, 'show'])->name('reviews.show');
         Route::post('reviews/{review}/reply', [\App\Http\Controllers\Admin\ReviewController::class, 'reply'])->name('reviews.reply');
@@ -86,7 +89,7 @@ Route::prefix('admin')
         Route::post('chat/{conversation}/message', [\App\Http\Controllers\Admin\ChatController::class, 'sendMessage'])->name('chat.send');
         Route::get('chat/{conversation}/messages', [\App\Http\Controllers\Admin\ChatController::class, 'getMessages'])->name('chat.messages');
         Route::patch('chat/{conversation}/status', [\App\Http\Controllers\Admin\ChatController::class, 'updateStatus'])->name('chat.update-status');
-        
+
         Route::resource('vouchers', \App\Http\Controllers\Admin\VoucherController::class);
     });
 
@@ -96,4 +99,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

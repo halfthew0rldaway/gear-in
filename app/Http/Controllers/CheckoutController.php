@@ -45,10 +45,10 @@ class CheckoutController extends Controller
     public function index(Request $request): View|RedirectResponse
     {
         $user = $request->user();
-        
+
         // Get selected items if provided
         $selectedItemIds = $request->input('selected_items', []);
-        
+
         if (!empty($selectedItemIds)) {
             // Only checkout selected items
             $cart = $this->cartService->totalsForItems($user, $selectedItemIds);
@@ -61,6 +61,32 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->withErrors([
                 'cart' => 'Keranjang Anda masih kosong atau tidak ada item yang dipilih.',
             ]);
+        }
+
+        // Validate stock for all items
+        foreach ($cart['items'] as $item) {
+            $product = $item->product;
+            $variant = $item->variant;
+
+            // Check if product or variant is active
+            if (!$product->is_active || ($variant && !$variant->is_active)) {
+                return redirect()->route('cart.index')->withErrors([
+                    'cart' => "Produk {$product->name}" . ($variant ? " ({$variant->name})" : '') . " tidak lagi tersedia.",
+                ]);
+            }
+
+            $currentStock = $variant ? $variant->stock : $product->stock;
+
+            if ($currentStock < $item->quantity) {
+                // Determine message based on stock status
+                $message = $currentStock === 0
+                    ? "Stok {$product->name}" . ($variant ? " ({$variant->name})" : '') . " telah habis."
+                    : "Stok {$product->name}" . ($variant ? " ({$variant->name})" : '') . " hanya tersisa {$currentStock}.";
+
+                return redirect()->route('cart.index')->withErrors([
+                    'cart' => $message,
+                ]);
+            }
         }
 
         return view('storefront.checkout', [
@@ -78,10 +104,10 @@ class CheckoutController extends Controller
     public function store(CheckoutRequest $request): RedirectResponse
     {
         $user = $request->user();
-        
+
         // Get selected items if provided
         $selectedItemIds = $request->input('selected_items', []);
-        
+
         if (!empty($selectedItemIds)) {
             // Only checkout selected items
             $cartItems = $user->cartItems()
@@ -107,7 +133,7 @@ class CheckoutController extends Controller
 
         $shippingOption = $this->shippingOptions[$data['shipping_method']] ?? null;
 
-        if (! $shippingOption) {
+        if (!$shippingOption) {
             throw ValidationException::withMessages([
                 'shipping_method' => 'Metode pengiriman tidak valid.',
             ]);
@@ -121,7 +147,7 @@ class CheckoutController extends Controller
                 // Load product with lock
                 $product = $item->product()->lockForUpdate()->first();
 
-                if (! $product || ! $product->is_active) {
+                if (!$product || !$product->is_active) {
                     throw ValidationException::withMessages([
                         'cart' => 'Produk tidak tersedia.',
                     ]);
@@ -137,7 +163,7 @@ class CheckoutController extends Controller
                         ->where('product_id', $product->id)
                         ->lockForUpdate()
                         ->first();
-                    
+
                     if (!$variant) {
                         // Check if variant exists but belongs to different product
                         $variantExists = \App\Models\ProductVariant::where('id', $item->variant_id)->first();
@@ -151,14 +177,14 @@ class CheckoutController extends Controller
                             ]);
                         }
                     }
-                    
+
                     // Check if variant is active (only check if explicitly false)
                     if (isset($variant->is_active) && $variant->is_active === false) {
                         throw ValidationException::withMessages([
                             'cart' => 'Varian ' . $variant->name . ' tidak aktif. Silakan pilih varian lain.',
                         ]);
                     }
-                    
+
                     $availableStock = $variant->stock;
                 }
 
@@ -236,7 +262,16 @@ class CheckoutController extends Controller
 
             foreach ($lineItems as $lineItem) {
                 $order->items()->create($lineItem['payload']);
-                $lineItem['product']->decrement('stock', $lineItem['payload']['quantity']);
+
+                // Track stock movement for product
+                $lineItem['product']->adjustStock(
+                    -$lineItem['payload']['quantity'],
+                    'order',
+                    $order->code ?: 'NEW',
+                    $user->id,
+                    'Order placement'
+                );
+
                 if ($lineItem['variant']) {
                     $lineItem['variant']->decrement('stock', $lineItem['payload']['quantity']);
                 }
