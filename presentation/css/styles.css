@@ -2517,8 +2517,23 @@ body {
     display: flex;
     gap: 1rem;
     z-index: 1000;
+    transition: opacity 0.5s ease;
 }
-
+/* Class ini akan ditambahkan via JavaScript saat user tidak bergerak */
+.nav-controls.hidden {
+    opacity: 0;
+    pointer-events: none; /* Agar tombol tidak bisa diklik saat tidak terlihat */
+    cursor: default;
+}
+/* Tambahan styling untuk tombol agar terlihat bagus */
+.nav-btn {
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+}
 .nav-btn {
     width: 50px;
     height: 50px;

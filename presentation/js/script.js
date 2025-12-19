@@ -5,7 +5,8 @@ class PresentationController {
         this.totalSlides = document.querySelectorAll('.slide').length;
         document.getElementById('totalSlides').textContent = this.totalSlides;
         this.isTransitioning = false;
-        
+        // Tambahkan ini: Properti untuk menyimpan timer
+        this.hideTimeout = null;
         this.init();
     }
     
@@ -14,7 +15,8 @@ class PresentationController {
         this.updateProgress();
         this.bindEvents();
         this.updateSlideCounter();
-        
+  // Panggil showControls pertama kali agar timer mulai berjalan
+        this.showControls();
         // Auto-start animations for first slide
         setTimeout(() => {
             this.animateSlide(1);
@@ -33,6 +35,13 @@ class PresentationController {
     }
     
     bindEvents() {
+        // Deteksi pergerakan mouse untuk memicu showControls
+        document.addEventListener('mousemove', () => this.showControls());
+        document.addEventListener('touchstart', () => this.showControls());
+        
+        // Event listener navigasi yang sudah ada
+        document.getElementById('prevBtn').addEventListener('click', () => this.prevSlide());
+        document.getElementById('nextBtn').addEventListener('click', () => this.nextSlide());
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             if (this.isTransitioning) return;
@@ -282,6 +291,29 @@ class PresentationController {
         prevBtn.disabled = this.currentSlide === 1;
         nextBtn.disabled = this.currentSlide === this.totalSlides;
     }
+  
+showControls() {
+        const navControls = document.querySelector('.nav-controls');
+        if (!navControls) return;
+
+        // Munculkan kembali
+        navControls.classList.remove('hidden');
+        document.body.style.cursor = 'default';
+        
+        // Hapus timer sebelumnya agar tidak bentrok
+        clearTimeout(this.hideTimeout);
+
+        // Set timer baru untuk menyembunyikan setelah 3 detik
+        this.hideTimeout = setTimeout(() => {
+            // Hanya sembunyikan jika tidak sedang di-hover (opsional tapi bagus)
+            if (!navControls.matches(':hover')) {
+                navControls.classList.add('hidden');
+                // document.body.style.cursor = 'none'; // Aktifkan jika ingin kursor ikut hilang
+            }
+        }, 3000);
+    }
+
+
 }
 
 // Initialize presentation when DOM is ready
