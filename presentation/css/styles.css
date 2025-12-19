@@ -2514,7 +2514,7 @@ body {
     bottom: 2rem;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
+    display: none;
     gap: 1rem;
     z-index: 1000;
     transition: opacity 0.5s ease;
