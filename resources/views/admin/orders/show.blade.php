@@ -101,13 +101,27 @@
             <div class="bg-white border border-gray-200 rounded-[32px] p-6 shadow-sm">
                 <h2 class="text-xs uppercase tracking-[0.4em] text-gray-400 mb-6">Manajemen</h2>
                 
+                @if($order->handled_by && $order->handled_by !== auth()->id())
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-5">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-yellow-800 mb-1">Pesanan Dikunci</p>
+                                <p class="text-xs text-yellow-700">Pesanan ini sedang ditangani oleh <strong>{{ $order->handledBy->name }}</strong>. Anda tidak dapat mengubah status pesanan ini.</p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <form action="{{ route('admin.orders.update', $order) }}" method="POST" class="space-y-5">
                     @csrf
                     @method('PATCH')
                     
                     <div>
                         <label for="status" class="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">Status Pesanan</label>
-                        <select name="status" id="status" class="w-full rounded-xl border-gray-200 text-sm focus:border-gray-900 focus:ring-gray-900">
+                        <select name="status" id="status" class="w-full rounded-xl border-gray-200 text-sm focus:border-gray-900 focus:ring-gray-900" {{ ($order->handled_by && $order->handled_by !== auth()->id()) ? 'disabled' : '' }}>
                             @foreach ([\App\Models\Order::STATUS_PENDING, \App\Models\Order::STATUS_PAID, \App\Models\Order::STATUS_SHIPPED, \App\Models\Order::STATUS_COMPLETED, \App\Models\Order::STATUS_CANCELLED] as $status)
                                 <option value="{{ $status }}" @selected($order->status === $status)>{{ ucfirst($status) }}</option>
                             @endforeach
@@ -117,10 +131,10 @@
                     <div>
                         <label for="tracking_number" class="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">Nomor Resi</label>
                         <input type="text" name="tracking_number" id="tracking_number" value="{{ $order->tracking_number }}" placeholder="-" 
-                            class="w-full rounded-xl border-gray-200 text-sm focus:border-gray-900 focus:ring-gray-900">
+                            class="w-full rounded-xl border-gray-200 text-sm focus:border-gray-900 focus:ring-gray-900" {{ ($order->handled_by && $order->handled_by !== auth()->id()) ? 'disabled' : '' }}>
                     </div>
 
-                    <button class="w-full py-3 rounded-full bg-gray-900 text-white text-xs uppercase tracking-[0.4em] hover:bg-black transition btn-ripple">
+                    <button type="submit" class="w-full py-3 rounded-full bg-gray-900 text-white text-xs uppercase tracking-[0.4em] hover:bg-black transition btn-ripple {{ ($order->handled_by && $order->handled_by !== auth()->id()) ? 'opacity-50 cursor-not-allowed' : '' }}" {{ ($order->handled_by && $order->handled_by !== auth()->id()) ? 'disabled' : '' }}>
                         Perbarui
                     </button>
                 </form>

@@ -280,10 +280,7 @@ class CheckoutController extends Controller
             // Apply voucher usage and save voucher_id to order
             if ($voucher) {
                 $this->voucherService->apply($voucher, $user, $order);
-                // Update order with voucher_id if column exists
-                if (Schema::hasColumn('orders', 'voucher_id')) {
-                    $order->update(['voucher_id' => $voucher->id]);
-                }
+                $order->update(['voucher_id' => $voucher->id]);
             }
 
             return $order;

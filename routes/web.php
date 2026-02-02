@@ -84,6 +84,10 @@ Route::prefix('admin')
         Route::get('reviews/{review}', [\App\Http\Controllers\Admin\ReviewController::class, 'show'])->name('reviews.show');
         Route::post('reviews/{review}/reply', [\App\Http\Controllers\Admin\ReviewController::class, 'reply'])->name('reviews.reply');
 
+        // Marketing Reviews
+        Route::get('products/{product}/marketing-reviews/create', [\App\Http\Controllers\Admin\MarketingReviewController::class, 'create'])->name('marketing-reviews.create');
+        Route::post('products/{product}/marketing-reviews', [\App\Http\Controllers\Admin\MarketingReviewController::class, 'store'])->name('marketing-reviews.store');
+
         Route::get('chat', [\App\Http\Controllers\Admin\ChatController::class, 'index'])->name('chat.index');
         Route::get('chat/{conversation}', [\App\Http\Controllers\Admin\ChatController::class, 'show'])->name('chat.show');
         Route::post('chat/{conversation}/message', [\App\Http\Controllers\Admin\ChatController::class, 'sendMessage'])->name('chat.send');

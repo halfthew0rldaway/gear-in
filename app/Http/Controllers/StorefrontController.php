@@ -56,7 +56,10 @@ class StorefrontController extends Controller
             ->whereHas('items', function ($query) use ($product) {
                 $query->where('product_id', $product->id);
             })
-            ->exists() && !$product->reviews()->where('user_id', auth()->id())->exists();
+            ->exists() && !\App\Models\Review::where('user_id', auth()->id())
+                ->where('product_id', $product->id)
+                ->whereNull('order_id')
+                ->exists();
 
         $isInWishlist = auth()->check() && \App\Models\Wishlist::where('user_id', auth()->id())
             ->where('product_id', $product->id)

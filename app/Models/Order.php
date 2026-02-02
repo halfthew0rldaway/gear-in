@@ -38,6 +38,7 @@ class Order extends Model
         'notes',
         'placed_at',
         'handled_by',
+        'voucher_id',
     ];
 
     protected $casts = [

@@ -101,12 +101,17 @@
                                     <button class="text-xs uppercase tracking-[0.4em] text-red-600 hover:text-red-700 focus-ring">Hapus Permanen</button>
                                 </form>
                             @else
-                                <a href="{{ route('admin.products.edit', $product) }}" class="text-xs uppercase tracking-[0.4em] text-gray-500 hover:text-gray-900 link-underline focus-ring">Edit</a>
-                                <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="inline-block ml-4">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="text-xs uppercase tracking-[0.4em] text-red-500 hover:text-red-600 focus-ring">Hapus</button>
-                                </form>
+                                <div class="flex items-center justify-end gap-3">
+                                    <a href="{{ route('admin.marketing-reviews.create', $product) }}" class="text-xs uppercase tracking-[0.4em] text-blue-600 hover:text-blue-700 link-underline focus-ring" title="Tambah Review Marketing">
+                                        Review
+                                    </a>
+                                    <a href="{{ route('admin.products.edit', $product) }}" class="text-xs uppercase tracking-[0.4em] text-gray-500 hover:text-gray-900 link-underline focus-ring">Edit</a>
+                                    <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="text-xs uppercase tracking-[0.4em] text-red-500 hover:text-red-600 focus-ring">Hapus</button>
+                                    </form>
+                                </div>
                             @endif
                         </td>
                     </tr>

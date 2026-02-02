@@ -74,6 +74,13 @@ class OrderController extends Controller
 
     public function update(Request $request, Order $order, ActivityLogger $logger): RedirectResponse
     {
+        // Check if order is being handled by another admin
+        if ($order->handled_by && $order->handled_by !== $request->user()->id) {
+            return back()->withErrors([
+                'error' => 'Pesanan ini sedang ditangani oleh admin lain. Anda tidak dapat mengubah status pesanan ini.'
+            ]);
+        }
+
         $data = $request->validate([
             'status' => [
                 'required',

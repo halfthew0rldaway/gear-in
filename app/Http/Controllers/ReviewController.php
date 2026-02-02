@@ -24,7 +24,7 @@ class ReviewController extends Controller
         // If order_id is provided, check if order is completed
         if ($data['order_id']) {
             $order = Order::findOrFail($data['order_id']);
-            
+
             if ($order->user_id !== $user->id) {
                 return back()->withErrors(['review' => 'Unauthorized.']);
             }
@@ -62,12 +62,14 @@ class ReviewController extends Controller
                 ]);
             }
 
-            // Check if user already reviewed this product
-            $existingReview = Review::where('user_id', $user->id)
+            // Check if user already reviewed this product (without specific order)
+            // This prevents multiple "general" reviews but allows order-specific reviews
+            $existingGeneralReview = Review::where('user_id', $user->id)
                 ->where('product_id', $product->id)
+                ->whereNull('order_id')
                 ->first();
 
-            if ($existingReview) {
+            if ($existingGeneralReview) {
                 return back()->withErrors([
                     'review' => 'Anda sudah memberikan review untuk produk ini.',
                 ]);
